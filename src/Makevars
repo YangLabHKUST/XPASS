@@ -1,0 +1,5 @@
+CC=clang-omp
+PKG_CXXFLAGS=-I../inst/include -DARMA_64BIT_WORD
+PKG_CPPFLAGS=-I$(LIB_GSL)/include -I../inst/include
+PKG_LIBS =$(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -L$(LIB_GSL)/libs -lpthread
+CXX_STD = CXX11
