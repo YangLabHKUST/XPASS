@@ -74,7 +74,7 @@ XPASS returns a list of results:
 6 HG00410 HG00410 -0.14512120 -2.5842302 -0.75355484
 
 ```
-The above output will also be stored in the files with file_out prefix if provided.
+XPASS will also write above outputs in the files with `file_out` prefix, if provided.
 
 
  # Usage
