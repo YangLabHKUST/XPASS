@@ -1,5 +1,5 @@
 # XPASS
-The XPASS package implement the XPASS approach for generating PRS with multi-ethnic datasets.
+The XPASS package implement the XPASS approach for generating PRS in a target population by integrating multi-ethnic datasets.
 
 # Installation 
 ```{r}
