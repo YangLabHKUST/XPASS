@@ -65,7 +65,7 @@ XPASS returns a list of results:
 5 rs3748593  0.0022335309 -0.0001147579  0.0014497337
 6 rs2272756  0.0010033806  0.0011124711  0.0019509467
 
-# PRS (if file_predGeno is provided): a data frame storing the PRS generated using mu1, mu2 and mu_XPASS, respectively.
+# PRS (with file_predGeno provided): a data frame storing the PRS generated using mu1, mu2 and mu_XPASS, respectively.
 > head(fit_bbj$PRS)
       FID     IID        PRS1       PRS2   PRS_XPASS
 1 HG00403 HG00403 -1.23431226  0.5992838 -0.29932176
