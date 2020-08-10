@@ -45,6 +45,38 @@ fit_bbj <-XPASS(file_z1 = height_bbj,file_z2 = height_ukb,file_ref1 = ref_EAS,fi
 
 ```
 
+XPASS returns a list of results:
+```{r}
+# H: a table of estimated heritabilities, co-heritability and genetic correlation (first row) and their corresponding standard erros (second row).
+> fit_bbj$H
+             h1         h2        h12        rho
+[1,] 0.43474307 0.63559207 0.37876061 0.72054189
+[2,] 0.02087136 0.03403142 0.02031872 0.01727539
+
+# mu: a data frame storing the posterior means obtained by LDpred-inf using only the target dataset (mu1) and only the auxiliary dataset (mu2), and the posterior mean obtained by XPASS (mu_XPASS).
+> head(fit_bbj$mu)
+        SNP           mu1           mu2      mu_XPASS
+1 rs4475691 -0.0008581511  0.0004678541 -0.0004164065
+2 rs7537756 -0.0017717779  0.0010456091 -0.0004210284
+3 rs7523549  0.0021641953  0.0003773637  0.0018222099
+4 rs3748592  0.0011018723  0.0008842415  0.0012244474
+5 rs3748593  0.0022335309 -0.0001147579  0.0014497337
+6 rs2272756  0.0010033806  0.0011124711  0.0019509467
+
+# PRS (if file_predGeno is provided): a data frame storing the PRS generated using mu1, mu2 and mu_XPASS, respectively.
+> head(fit_bbj$PRS)
+      FID     IID        PRS1       PRS2   PRS_XPASS
+1 HG00403 HG00403 -1.23431226  0.5992838 -0.29932176
+2 HG00404 HG00404 -0.28765365 -0.8408158 -0.02486850
+3 HG00406 HG00406  0.20704538 -1.8499626  0.03852178
+4 HG00407 HG00407 -0.26639864 -1.2527320  0.00212844
+5 HG00409 HG00409 -0.06152861  0.9371440  0.32425772
+6 HG00410 HG00410 -0.14512120 -2.5842302 -0.75355484
+
+```
+The above output will also be stored in the files with file_out prefix if provided.
+
+
  # Usage
  
 To fit XPASS using your own datasets, follow the steps below:
