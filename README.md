@@ -51,7 +51,7 @@ To fit XPASS using your own datasets, follow the steps below:
 
  Step 1: Download GWAS summary-level data of both target and auxiliary populations from public resources
  
- Step 2: Prepare summary statistics files in the XPASS format (check data format in the [example link](https://www.dropbox.com/sh/i7rhnko69974dje/AACfcDXz0cmwshbli8q7PZA5a?dl=0))
+ Step 2: Prepare summary statistics files in the XPASS format (check data format in the [example data](https://www.dropbox.com/sh/i7rhnko69974dje/AACfcDXz0cmwshbli8q7PZA5a?dl=0))
  
  Step 3: Prepare reference genotypes and assiciated covariates from target and auxiliary populations
  
