@@ -11,6 +11,36 @@ devtools::install_github("YangLabHKUST/XPASS")
 
 We illustrate the usage of XPASS using the GWAS summary statistics of height from UKB and BBJ. For convenience, we use the 1000 Genomes project genotypes as reference panels, which may not achieve optimal prediction accuracy due to the limited sample size. In practice, it is suggested to use larger datasets as reference panels (n>2000). The datasets involved in the following example can be downloaded from [here](https://www.dropbox.com/sh/i7rhnko69974dje/AACfcDXz0cmwshbli8q7PZA5a?dl=0).
 
+The GWAS summary statistics should be prepared in the following format:
+```
+head height_bbj_3M_format.txt
+
+SNP	N	Z	A1	A2
+rs117086422	159095	-1.20413423957762	T	C
+rs28612348	159095	-1.25827042089233	T	C
+rs4475691	159095	-1.19842287777303	T	C
+rs950122	159095	-1.2014434974188	C	G
+rs3905286	159095	-1.27046106136441	T	C
+rs28407778	159095	-1.26746342605063	A	G
+rs4246505	159095	-1.24706211285128	A	G
+rs4626817	159095	-1.26366297625074	A	G
+rs11507767	159095	-1.28611566069053	G	A
+
+head height_ukb_3M_format.txt
+
+SNP	N	Z	A1	A2
+rs117086422	429312	1.42436004338939	T	C
+rs28612348	429312	1.48706291417224	T	C
+rs4475691	429312	1.53977372135067	T	C
+rs950122	429312	1.37958155329171	C	G
+rs3905286	429312	1.77045946243262	T	C
+rs28407778	429312	1.9908370573435	A	G
+rs4246505	429312	1.90922505355565	A	G
+rs4626817	429312	1.53216668392479	A	G
+rs11507767	429312	1.55873328059033	G	A
+```
+
+
 ```{r}
 # library(devtools)
 # install_github("https://github.com/YangLabHKUST/XPASS")
@@ -31,8 +61,11 @@ ref_EUR <- "1000G.EUR.QC.hm3.ind"
 # covariates of EUR reference genotypes
 cov_EUR <- "1000G.EUR.QC.hm3.ind.pc20.txt"
 
-# genotype file of test data (plink prefix)
+# genotype file of test data (plink prefix). 
+# Note: for demonstration, we assume that the genotypes of prediction target are used as the reference panel of target population. 
+# In practice, one can also use genotypes from other sources as reference panel.
 height_test <- "1000G.EAS.QC.hm3.ind"
+
 
 # sumstats of height
 height_bbj <- "height_bbj_3M_format.txt"  # target
