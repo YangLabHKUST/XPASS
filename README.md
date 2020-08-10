@@ -54,8 +54,8 @@ XPASS returns a list of results:
 [1,] 0.43474307 0.63559207 0.37876061 0.72054189
 [2,] 0.02087136 0.03403142 0.02031872 0.01727539
 
-# mu: a data frame storing the posterior means obtained by LDpred-inf using only the target dataset (mu1) and
-# only the auxiliary dataset (mu2), and the posterior mean obtained by XPASS (mu_XPASS).
+# mu: a data frame storing the posterior means computed by LDpred-inf using only the target dataset (mu1) and
+# only the auxiliary dataset (mu2), and the posterior mean computed by XPASS (mu_XPASS).
 > head(fit_bbj$mu)
         SNP           mu1           mu2      mu_XPASS
 1 rs4475691 -0.0008581511  0.0004678541 -0.0004164065
