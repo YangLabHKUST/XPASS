@@ -26,6 +26,7 @@ rs4246505	159095	-1.24706211285128	A	G
 rs4626817	159095	-1.26366297625074	A	G
 rs11507767	159095	-1.28611566069053	G	A
 
+
 head height_ukb_3M_format.txt
 
 SNP	N	Z	A1	A2
@@ -40,7 +41,7 @@ rs4626817	429312	1.53216668392479	A	G
 rs11507767	429312	1.55873328059033	G	A
 ```
 
-
+Run XPASS with the following comand:
 ```{r}
 # library(devtools)
 # install_github("https://github.com/YangLabHKUST/XPASS")
