@@ -98,4 +98,4 @@ The XPASS package is developed by Mingxuan Cai (mcaiad@ust.hk).
 
 # Contact information
 
-Please feel free to contact Mingxuan Cai (mcaiad@ust.hk) or Prof. Can Yang (macyang@ust.hk) if any questions.
+Please contact Mingxuan Cai (mcaiad@ust.hk) or Prof. Can Yang (macyang@ust.hk) if any enquiry.
