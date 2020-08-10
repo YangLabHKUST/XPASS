@@ -41,7 +41,7 @@ rs4246505	429312	1.90922505355565	A	G
 rs4626817	429312	1.53216668392479	A	G
 rs11507767	429312	1.55873328059033	G	A
 ```
-Once the summary files are formatted, XPASS will automatically process the datasets, including SNPs overlapping, allele matching.
+Once the summary files are formatted, XPASS will automatically process the datasets, including SNPs overlapping and allele matching.
 Run XPASS with the following comand:
 ```{r}
 # library(devtools)
