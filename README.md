@@ -41,7 +41,7 @@ rs4246505	429312	1.90922505355565	A	G
 rs4626817	429312	1.53216668392479	A	G
 rs11507767	429312	1.55873328059033	G	A
 ```
-
+Once the summary files are formatted, XPASS will automatically process the datasets, including SNPs overlapping, allele matching.
 Run XPASS with the following comand:
 ```{r}
 # library(devtools)
@@ -78,6 +78,35 @@ fit_bbj <-XPASS(file_z1 = height_bbj,file_z2 = height_ukb,file_ref1 = ref_EAS,fi
                 pop = "EAS",sd_method="LD_block",compPosMean = T,
                 file_out = "height_bbj_ukb_ref_TGP")
 
+Summary statistics file 1: height_bbj_3M_format.txt
+Summary statistics file 2: height_ukb_3M_format.txt
+Reference file 1: 1000G.EAS.QC.hm3.ind
+Reference file 2: 1000G.EUR.QC.hm3.ind
+Covariates file 1: 1000G.EAS.QC.hm3.ind.pc5.txt
+Covariates file 2: 1000G.EUR.QC.hm3.ind.pc20.txt
+Test genotype file : 1000G.EAS.QC.hm3.ind
+Reading data from summary statisitcs...
+3621503 and 3621503 SNPs found in summary statistics files 1 and 2.
+There are two reference panels. Assume two phenotypes are from different populations.
+Reading SNP info from reference panels...
+1209411 and 1313833 SNPs found in reference panel 1 and 2.
+Reading SNP info from test genotype file...
+1209411 SNPs found in test file.
+754616 SNPs are matched in all files.
+0 SNPs are removed because of ambiguity; 754616 SNPs remained.
+Calculating kinship matrix from the both reference panels...
+128169 SNPs in the second reference panel are alligned for alleles according to the first.
+14410 SNPs have different minor alleles in phenotype 1, z-scores are corrected according to reference panel.
+14410 SNPs have different minor alleles in phenotype 1, z-scores are corrected according to reference panel.
+Assigning SNPs to LD Blocks...
+Calculate PVE...
+Compute posterior mean from  1443  blocks ...
+...
+Predicting PRS from test genotypes...
+Done.
+             h1         h2        h12        rho
+[1,] 0.43474307 0.63559207 0.37876061 0.72054189
+[2,] 0.02087136 0.03403142 0.02031872 0.01727539
 ```
 
 XPASS returns a list of results:
