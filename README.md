@@ -8,11 +8,11 @@ devtools::install_github("YangLabHKUST/XPASS")
 ```
 
 # Usage
- The XPASS analysis comprises five steps:
+ The XPASS analysis comprises four steps:
 
  Step 1: Download GWAS summary-level data of both target and auxiliary populations from public resources
  
- Step 2: Format data
+ Step 2: Prepare summary statistics files in the XPASS format
  
  Step 3: Prepare reference genotypes and assiciated covariates from target and auxiliary populations
  
