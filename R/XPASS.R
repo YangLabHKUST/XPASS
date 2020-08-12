@@ -356,7 +356,7 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
 
     if(sd_method=="LD_block"|compPosMean){
       cat("Assigning SNPs to LD Blocks...\n")
-      block <- read.table(system.file("extdata", paste0(pop,"_fourier_ls-all.bed"), package = "VCM"),header = T)
+      block <- read.table(system.file("extdata", paste0(pop,"_fourier_ls-all.bed"), package = "XPASS"),header = T)
       group <- rep(0,nrow(zf1))
       idx_group <- 1
       for(i in 1:22){
