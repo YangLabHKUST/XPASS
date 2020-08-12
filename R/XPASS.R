@@ -351,8 +351,8 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
     z_score2 <- zf2$Z
     z_score1[ind1] <- -z_score1[ind1]
     z_score2[ind2] <- -z_score2[ind2]
-    cat(sum(ind1)," SNPs have different minor alleles in phenotype 1, z-scores are corrected according to reference panel.\n",sep = "")
-    cat(sum(ind2)," SNPs have different minor alleles in phenotype 1, z-scores are corrected according to reference panel.\n",sep = "")
+    cat(sum(ind1)," SNPs have different minor alleles in population 1, z-scores are corrected according to reference panel.\n",sep = "")
+    cat(sum(ind2)," SNPs have different minor alleles in population 2, z-scores are corrected according to reference panel.\n",sep = "")
 
     if(sd_method=="LD_block"|compPosMean){
       cat("Assigning SNPs to LD Blocks...\n")
