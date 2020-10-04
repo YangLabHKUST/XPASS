@@ -394,7 +394,7 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
     cat("Calculate PVE...\n")
     fit <- corr_ss(z_score1,z_score2,K1,K2,K12,zf1$N,zf2$N,Z1=cov1,Z2=cov2,group = group)
   }
-
+  print(fit$H)
   ret <- c(fit,snps=list(snps))
 
   if(compPosMean){
