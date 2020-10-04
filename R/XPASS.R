@@ -399,7 +399,14 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
 
   if(compPosMean){
     # if(is.null(ldw)) ldw <- ncol(X1)/1500
-    h12 <- ifelse(fit$H[1,4]>1,fit$H[1,1]*fit$H[1,2],fit$H[1,3])
+    # Set rho=0.99 (-0.99) if it exceed 1 (-1).
+    # h12 <- ifelse(fit$H[1,4]>1,fit$H[1,1]*fit$H[1,2],fit$H[1,3])
+    if(abs(fit$H[1,4])>1){
+      cat("The MoM estimate of genetic correlation rho is ",fit$H[1,4],", which exceeds 1 (-1). Set rho=0.99 (-0.99) for computing posterior means. \n")
+      h12 <- sign(fit$H[1,4])*0.99*sqrt(fit$H[1,1]*fit$H[1,2])
+    } else {
+      h12 <- fit$H[1,3]
+    }
     ngroup <- length(unique(group))
     mu <- matrix(0,ncol(X1),3)
     cat("Compute posterior mean from ",ngroup," blocks ...\n")
