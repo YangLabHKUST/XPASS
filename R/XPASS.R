@@ -11,16 +11,16 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
   if(! is.null(file_cov1)) cat("Covariates file 1: ",file_cov1,"\n",sep="")
   if(! is.null(file_cov2)) cat("Covariates file 2: ",file_cov2,"\n",sep="")
   if(! is.null(file_predGeno)) cat("Test genotype file : ",file_predGeno,"\n",sep="")
-
+  
   cat("Reading data from summary statisitcs...\n")
   zf1 <- fread(file_z1,data.table = F,header = T,stringsAsFactors = F)
   zf2 <- fread(file_z2,data.table = F,header = T,stringsAsFactors = F)
   # colnames(zf1) <- colnames(zf2) <- c("SNP","N","Z","A1","A2")
   cat(nrow(zf1)," and ",nrow(zf2)," SNPs found in summary statistics files 1 and 2.\n",sep = "")
   
+  
   cat("Reading SNP info from reference panels...\n")
   ref1_info <- fread(paste(file_ref1,".bim",sep=""),data.table = F,stringsAsFactors = F)
-  snps_info <- ref1_info
   ref2_info <- fread(paste(file_ref2,".bim",sep=""),data.table = F,stringsAsFactors = F)
   colnames(ref1_info) <- colnames(ref2_info) <- c("CHR","SNP","POS","BP","A1","A2")
   cat(nrow(ref1_info)," and ",nrow(ref2_info)," SNPs found in reference panel 1 and 2.\n",sep = "")
@@ -43,7 +43,6 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
   zf2 <- zf2[match(snps,zf2$SNP),]
   idx_ref1 <- match(snps,ref1_info$SNP)
   ref1_info <- ref1_info[idx_ref1,]
-  snps_info <- snps_info[idx_ref1,]
   idx_ref2 <- match(snps,ref2_info$SNP)
   ref2_info <- ref2_info[idx_ref2,]
   if(!is.null(file_predGeno)&compPosMean){
@@ -101,7 +100,6 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
   idx_ref2 <- idx_ref2[!snps_rm]
   ref1_info <- ref1_info[!snps_rm,]
   ref2_info <- ref2_info[!snps_rm,]
-  snps_info <- snps_info[!snps_rm,]
   
   if(!is.null(file_predGeno)&compPosMean){
     idx_test <- idx_test[!snps_rm]
@@ -137,7 +135,6 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
       X2 <- X2[,!no_var]
       ref1_info <- ref1_info[!no_var,]
       ref2_info <- ref2_info[!no_var,]
-      snps_info <- snps_info[!no_var,]
       zf1 <- zf1[!no_var,]
       zf2 <- zf2[!no_var,]
       cat(sum(no_var)," SNPs are removed because of no variation; ",length(snps)," SNPs remained.\n",sep = "")
@@ -183,10 +180,7 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
       snps <- snps[!no_var]
       X1 <- X1[,!no_var]
       ref1_info <- ref1_info[!no_var,]
-      ref2_info <- ref2_info[!no_var,]
-      snps_info <- snps_info[!no_var,]
       zf1 <- zf1[!no_var,]
-      zf2 <- zf2[!no_var,]
       cat(sum(no_var)," SNPs are removed because of no variation; ",ncol(X1)," SNPs remained.\n",sep = "")
     }
     # X1sd <- apply(X1,2,sd)
@@ -210,10 +204,7 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
     if(sum(no_var)!=0){
       snps <- snps[!no_var]
       X2 <- X2[,!no_var]
-      ref1_info <- ref1_info[!no_var,]
       ref2_info <- ref2_info[!no_var,]
-      snps_info <- snps_info[!no_var,]
-      zf1 <- zf1[!no_var,]
       zf2 <- zf2[!no_var,]
       cat(sum(no_var)," SNPs are removed because of no variation; ",ncol(X2)," SNPs remained.\n",sep = "")
     }
@@ -329,8 +320,7 @@ if(compPosMean){
     ret <- c(ret,PRS=list(yh))
   }
   
-  mu <- data.frame(CHR=snps_info$V1,SNP=snps_info$V2,POS=snps_info$V4,A1=snps_info$V5,A2=snps_info$V6,
-                   mu1=mu[,1],mu2=mu[,2],mu_XPASS=mu[,3])
+  mu <- data.frame(SNP=snps,mu1=mu[,1],mu2=mu[,2],mu_XPASS=mu[,3])
   write.table(mu,file=paste0(file_out,"_PosteriorMean.txt"),col.names = T,row.names = F,quote=F,sep="\t")
   ret <- c(ret,mu=list(mu))
 }
@@ -341,4 +331,3 @@ print(fit$H)
 if(nchar(file_out)>0) sink()
 return(ret)
 }
-
