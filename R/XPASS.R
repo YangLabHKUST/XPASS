@@ -308,7 +308,7 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
     mu[,c(1,3)] <- mu[,c(1,3)]/sqrt(ncol(X1))/X1sd
     mu[,2] <- mu[,2]/sqrt(ncol(X2))/X2sd
 
-    if(!is.null(file_predGeno)){
+    if(!is.null(file_predGeno)&compPRS){
       cat("Predicting PRS from test genotypes...\n")
       fam_test <- fread(paste0(file_predGeno,".fam"))
       test_geno <- read_data(file_predGeno,fillMiss = "zero")
