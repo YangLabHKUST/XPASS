@@ -164,15 +164,16 @@ XPASS returns a list of results:
 [2,] 0.02087136 0.03403142 0.02031872 0.01727539
 
 # mu: a data frame storing the posterior means computed by LDpred-inf using only the target dataset (mu1) and
-# only the auxiliary dataset (mu2), and the posterior mean computed by XPASS (mu_XPASS).
+# only the auxiliary dataset (mu2), and the posterior mean computed by XPASS (mu_XPASS). SNPs information is 
+# also returned: A1 is the effect allele, A2 is the other allele.
 > head(fit_bbj$mu)
-        SNP           mu1           mu2      mu_XPASS
-1 rs4475691 -0.0008581511  0.0004678541 -0.0004164065
-2 rs7537756 -0.0017717779  0.0010456091 -0.0004210284
-3 rs7523549  0.0021641953  0.0003773637  0.0018222099
-4 rs3748592  0.0011018723  0.0008842415  0.0012244474
-5 rs3748593  0.0022335309 -0.0001147579  0.0014497337
-6 rs2272756  0.0010033806  0.0011124711  0.0019509467
+  CHR       SNP    POS A1 A2           mu1           mu2      mu_XPASS
+1   1 rs4475691 846808  T  C -0.0008581511  0.0004678540 -0.0004164064
+2   1 rs7537756 854250  G  A -0.0017717778  0.0010456091 -0.0004210284
+3   1 rs7523549 879317  T  C  0.0021641953  0.0003773638  0.0018222100
+4   1 rs3748592 880238  A  G  0.0011018724  0.0008842415  0.0012244475
+5   1 rs3748593 880390  A  C  0.0022335309 -0.0001147578  0.0014497338
+6   1 rs2272756 882033  A  G  0.0010033806  0.0011124711  0.0019509467
 
 # PRS (with file_predGeno provided): a data frame storing the PRS generated using mu1, mu2 and mu_XPASS, respectively.
 > head(fit_bbj$PRS)
