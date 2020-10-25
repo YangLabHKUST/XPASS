@@ -1,7 +1,9 @@
 # XPASS
+
 The XPASS package implement the XPASS approach for generating PRS in a target population by integrating multi-ethnic datasets.
 
 # Installation 
+
 ```{r}
 #install.packages("devtools")
 devtools::install_github("YangLabHKUST/XPASS")
@@ -9,9 +11,14 @@ devtools::install_github("YangLabHKUST/XPASS")
 
 # Quick start
 
-We illustrate the usage of XPASS using the GWAS summary statistics of height from UKB and BBJ. For convenience, we use the 1000 Genomes project genotypes as reference panels, which may not achieve optimal prediction accuracy due to the limited sample size. In practice, it is suggested to use larger datasets as reference panels (n>2000). The datasets involved in the following example can be downloaded from [here](https://www.dropbox.com/sh/i7rhnko69974dje/AACfcDXz0cmwshbli8q7PZA5a?dl=0).
+We illustrate the usage of XPASS using the GWAS summary statistics of BMI from UKB and BBJ. For demonstration, we use the 1000 Genomes project genotypes as reference panels, which is easily accessible. __However, because these reference panels only contain 377 EAS amples and 417 EUR samples, optimal prediction accuracy of XPASS is not expected. In practice, it is suggested to use larger datasets as reference panels (n>2000). Therefore, we strongly suggest users to use their own reference panels with sufficiently large sample sizes.__ 
+
+## Data preparation
+
+The datasets involved in the following example can be downloaded from [here](https://www.dropbox.com/sh/i7rhnko69974dje/AACfcDXz0cmwshbli8q7PZA5a?dl=0).
 
 Input files of XPASS includ:
+
 - summay statistics file of the target population
 - summay statistics file of the auxiliary population
 - reference panel of the target population in plink 1 format
@@ -20,13 +27,19 @@ Input files of XPASS includ:
 - covariates file associated with the auxiliary population reference panel (optional)
 
 The XPASS format GWAS summary statistics file has 5 fields:
+
 - SNP: SNP rsid
 - N: sample size
 - Z: Z-scores
 - A1: effect allele
 - A2: other allele. 
-```
-head height_bbj_3M_format.txt
+
+
+
+Here, we use the BMI GWAS from BBJ male as the target training set and BMI GWAS from UKB as the auxiliary training set
+
+```bash
+$ head BMI_bbj_male_3M_format_3MImp.txt
 
 SNP	N	Z	A1	A2
 rs117086422	159095	-1.20413423957762	T	C
@@ -40,8 +53,8 @@ rs4626817	159095	-1.26366297625074	A	G
 rs11507767	159095	-1.28611566069053	G	A
 ```
 
-```
-head height_ukb_3M_format.txt
+```bash
+$ head height_ukb_3M_format.txt
 
 SNP	N	Z	A1	A2
 rs117086422	429312	1.42436004338939	T	C
@@ -55,9 +68,29 @@ rs4626817	429312	1.53216668392479	A	G
 rs11507767	429312	1.55873328059033	G	A
 ```
 
-The covariates files should not include row names and column names. The rows should be exactly corresponding to the individuals in the .fam file of reference genotypes. Each column corresponds to one covariate. A column of one should not be included in the file.
+We keep the BMI GWAS from BBJ female as the external validation dataset:
+
+```bash
+$ head BMI_bbj_male_3M_format_3MImp.txt
+
+SNP	N	Z	A1	A2
+rs117086422	72390	0.897252679561414	T	C
+rs28612348	72390	0.904738461538462	T	C
+rs4475691	72390	0.89177374486687	T	C
+rs950122	72390	0.891523178807947	C	G
+rs3905286	72390	0.827441738675046	T	C
+rs28407778	72390	0.816801884323476	A	G
+rs4246505	72390	0.812148186935463	A	G
+rs4626817	72390	0.811624558188245	A	G
+rs11507767	72390	0.811100929441026	G	A
 ```
-head 1000G.EAS.QC.hm3.ind.pc5.txt
+
+
+
+The covariates files should not include row names and column names. The rows should be exactly corresponding to the individuals in the .fam file of reference genotypes. Each column corresponds to one covariate. A column of one should not be included in the file.
+
+```bash
+$ head 1000G.EAS.QC.hm3.ind.pc5.txt
 
 -0.0242863 0.0206888 -0.0028171 0.0343263 0.0211044
 -0.025051 0.0275325 -0.0332156 -0.0233166 0.0588989
@@ -71,8 +104,8 @@ head 1000G.EAS.QC.hm3.ind.pc5.txt
 -0.0258843 0.0476758 0.0073353 0.0164056 0.0072118
 ```
 
-```
-head 1000G.EUR.QC.hm3.ind.pc20.txt
+```bash
+$ head 1000G.EUR.QC.hm3.ind.pc20.txt
 
 0.0290072 0.0717627 -0.0314029 0.0317316 0.0618357 0.0385132 0.122857 -0.0289581 -0.0114267 -0.0205926 -0.0466983 0.0836711 0.00690379 0.0345008 -0.0179313 0.0109661 -0.0214763 0.0014544 0.0182944 0.0399625
 0.0378568 0.0499758 -0.00811504 0.0363021 -0.0579984 0.0422509 0.141279 -0.0167868 -0.0181999 0.0165593 -0.0304088 0.0423324 0.0226001 0.00843853 0.0212477 -0.0666462 -0.0787379 0.0136196 0.108933 0.0801246
@@ -86,8 +119,13 @@ head 1000G.EUR.QC.hm3.ind.pc20.txt
 0.0290721 0.0541744 -0.0238317 0.0254426 0.0986334 0.0706142 0.0977585 0.00427919 -0.0381976 0.0020029 -0.0161052 -0.016666 -0.00627125 -0.00490556 -0.0410802 0.0125096 -0.0175252 0.0320359 0.00866061 0.0736791
 ```
 
+
+
+## Run XPASS
+
 Once the imput files are formatted, XPASS will automatically process the datasets, including SNPs overlapping and allele matching.
 Run XPASS with the following comand:
+
 ```{r}
 # library(devtools)
 # install_github("https://github.com/YangLabHKUST/XPASS")
@@ -111,86 +149,131 @@ cov_EUR <- "1000G.EUR.QC.hm3.ind.pc20.txt"
 # genotype file of test data (plink prefix). 
 # Note: for demonstration, we assume that the genotypes of prediction target are used as the reference panel of target population. 
 # In practice, one can also use genotypes from other sources as reference panel.
-height_test <- "1000G.EAS.QC.hm3.ind"
+BMI_test <- "1000G.EAS.QC.hm3.ind"
 
 
 # sumstats of height
-height_bbj <- "height_bbj_3M_format.txt"  # target
-height_ukb <- "height_ukb_3M_format.txt"  # auxiliary
+BMI_bbj_male <- "BMI_bbj_male_3M_format_3MImp.txt"  # target
+BMI_ukb <- "BMI_ukb_sumstat_format_all.txt"  # auxiliary
 
-fit_bbj <-XPASS(file_z1 = height_bbj,file_z2 = height_ukb,file_ref1 = ref_EAS,file_ref2 = ref_EUR,
-                file_cov1 = cov_EAS,file_cov2 = cov_EUR,file_predGeno = height_test,
+BMI_bbj_female <- "BMI_bbj_female_3M_format_3MImp.txt"  # external validation
+
+fit_bbj <-XPASS(file_z1 = BMI_bbj_male,file_z2 = BMI_ukb,file_ref1 = ref_EAS,
+                file_ref2 = ref_EUR,
+                file_cov1 = cov_EAS,file_cov2 = cov_EUR,
+                file_predGeno = BMI_test,
+                compPRS=T,
                 pop = "EAS",sd_method="LD_block",compPosMean = T,
-                file_out = "height_bbj_ukb_ref_TGP")
+                file_out = "BMI_bbj_ukb_ref_TGP")
 
-Summary statistics file 1: height_bbj_3M_format.txt
-Summary statistics file 2: height_ukb_3M_format.txt
+Summary statistics file 1: BMI_bbj_male_3M_format_3MImp.txt
+Summary statistics file 2: BMI_ukb_sumstat_format_all.txt
 Reference file 1: 1000G.EAS.QC.hm3.ind
 Reference file 2: 1000G.EUR.QC.hm3.ind
 Covariates file 1: 1000G.EAS.QC.hm3.ind.pc5.txt
 Covariates file 2: 1000G.EUR.QC.hm3.ind.pc20.txt
-Test genotype file : 1000G.EAS.QC.hm3.ind
 Reading data from summary statisitcs...
-3621503 and 3621503 SNPs found in summary statistics files 1 and 2.
-There are two reference panels. Assume two phenotypes are from different populations.
+3506148 and 3777871 SNPs found in summary statistics files 1 and 2.
 Reading SNP info from reference panels...
 1209411 and 1313833 SNPs found in reference panel 1 and 2.
-Reading SNP info from test genotype file...
-1209411 SNPs found in test file.
-754616 SNPs are matched in all files.
-0 SNPs are removed because of ambiguity; 754616 SNPs remained.
+746454 SNPs are matched in all files.
+0 SNPs are removed because of ambiguity; 746454 SNPs remained.
 Calculating kinship matrix from the both reference panels...
-128169 SNPs in the second reference panel are alligned for alleles according to the first.
-14410 SNPs have different minor alleles in phenotype 1, z-scores are corrected according to reference panel.
-14410 SNPs have different minor alleles in phenotype 2, z-scores are corrected according to reference panel.
+127749 SNPs in the second reference panel are alligned for alleles according to the first.
+14337 SNPs have different minor alleles in population 1, z-scores are corrected according to reference panel.
+14332 SNPs have different minor alleles in population 2, z-scores are corrected according to reference panel.
 Assigning SNPs to LD Blocks...
 Calculate PVE...
-Compute posterior mean from  1443  blocks ...
+              h1          h2         h12        rho
+[1,] 0.165790395 0.247603545 0.129399058 0.63866483
+[2,] 0.007631346 0.008542654 0.006856057 0.02002658
 ...
 Predicting PRS from test genotypes...
 Done.
-             h1         h2        h12        rho
-[1,] 0.43474307 0.63559207 0.37876061 0.72054189
-[2,] 0.02087136 0.03403142 0.02031872 0.01727539
 ```
 
-XPASS returns a list of results:
-```{r}
-# H: a table of estimated heritabilities, co-heritability and genetic correlation (first row)
-# and their corresponding standard erros (second row).
-> fit_bbj$H
-             h1         h2        h12        rho
-[1,] 0.43474307 0.63559207 0.37876061 0.72054189
-[2,] 0.02087136 0.03403142 0.02031872 0.01727539
 
-# mu: a data frame storing the posterior means computed by LDpred-inf using only the target dataset (mu1) and
-# only the auxiliary dataset (mu2), and the posterior mean computed by XPASS (mu_XPASS). SNPs information is 
-# also returned: A1 is the effect allele, A2 is the other allele.
+
+## XPASS output
+
+XPASS returns a list of results, the keyoutputs are:
+
+- H: a table of estimated heritabilities, co-heritability and genetic correlation (first row) and their corresponding standard erros (second row).
+
+```{r}
+> fit_bbj$H
+              h1          h2         h12        rho
+[1,] 0.165790395 0.247603545 0.129399058 0.63866483
+[2,] 0.007631346 0.008542654 0.006856057 0.02002658
+
+```
+
+- mu: a data frame storing the posterior means computed by LDpred-inf using only the target dataset (mu1) and only the auxiliary dataset (mu2), and the posterior mean computed by XPASS (mu_XPASS). SNPs information is also returned: A1 is the effect allele, A2 is the other allele.
+
+```{r}
 > head(fit_bbj$mu)
   CHR       SNP    POS A1 A2           mu1           mu2      mu_XPASS
-1   1 rs4475691 846808  T  C -0.0008581511  0.0004678540 -0.0004164064
-2   1 rs7537756 854250  G  A -0.0017717778  0.0010456091 -0.0004210284
-3   1 rs7523549 879317  T  C  0.0021641953  0.0003773638  0.0018222100
-4   1 rs3748592 880238  A  G  0.0011018724  0.0008842415  0.0012244475
-5   1 rs3748593 880390  A  C  0.0022335309 -0.0001147578  0.0014497338
-6   1 rs2272756 882033  A  G  0.0010033806  0.0011124711  0.0019509467
-
-# PRS (with file_predGeno provided): a data frame storing the PRS generated using mu1, mu2 and mu_XPASS, respectively.
-> head(fit_bbj$PRS)
-      FID     IID        PRS1       PRS2   PRS_XPASS
-1 HG00403 HG00403 -1.23431226  0.5992838 -0.29932176
-2 HG00404 HG00404 -0.28765365 -0.8408158 -0.02486850
-3 HG00406 HG00406  0.20704538 -1.8499626  0.03852178
-4 HG00407 HG00407 -0.26639864 -1.2527320  0.00212844
-5 HG00409 HG00409 -0.06152861  0.9371440  0.32425772
-6 HG00410 HG00410 -0.14512120 -2.5842302 -0.75355484
-
+1   1 rs4475691 846808  T  C -1.271443e-04 -0.0001837393 -0.0003248579
+2   1 rs7537756 854250  G  A -4.778206e-05 -0.0002169705 -0.0002979870
+3   1 rs3748592 880238  A  G -3.201406e-04 -0.0008911591 -0.0007477507
+4   1 rs2340582 882803  A  G -3.396992e-04 -0.0009056487 -0.0008076512
+5   1 rs4246503 884815  A  G -3.318260e-04 -0.0009265197 -0.0008148705
+6   1 rs3748597 888659  T  C -3.327131e-04 -0.0009142760 -0.0008113772
 ```
+
+- PRS (if file_predGeno provided and compPRS=T): a data frame storing the PRS generated using mu1, mu2 and mu_XPASS, respectively.
+
+```{r}
+> head(fit_bbj$PRS)
+      FID     IID        PRS1       PRS2  PRS_XPASS
+1 HG00403 HG00403  0.14310343 0.92040953 0.55960909
+2 HG00404 HG00404 -0.19478307 0.63289820 0.03773899
+3 HG00406 HG00406 -0.09440555 0.69099450 0.14173516
+4 HG00407 HG00407  0.05533466 0.07036618 0.05091082
+5 HG00409 HG00409  0.25063980 1.54556843 0.83527097
+6 HG00410 HG00410  0.13454734 0.23143305 0.10214319
+
+# One can also compute PRS after fitting the model:
+> PRS <- predict_XPASS(fit_bbj$mu,ref_EAS)
+> head(PRS)
+      FID     IID        PRS1       PRS2  PRS_XPASS
+1 HG00403 HG00403  0.14310343 0.92040953 0.55960909
+2 HG00404 HG00404 -0.19478307 0.63289820 0.03773899
+3 HG00406 HG00406 -0.09440555 0.69099450 0.14173516
+4 HG00407 HG00407  0.05533466 0.07036618 0.05091082
+5 HG00409 HG00409  0.25063980 1.54556843 0.83527097
+6 HG00410 HG00410  0.13454734 0.23143305 0.10214319
+```
+
 XPASS will also write above outputs into the files with `file_out` prefix, if provided.
 
 
+
+## External validation using independent GWAS data
+
+Because the WeGene data is currently not available online, we use the GWAS of female BMI from BBJ as the external validation dataset to approximate the prediction $R^2$. Specifically we use the following equation:
+
+$$R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2,$$
+
+where $z$ is the z-score of external summsry statistics, $n$ is its sample size, $\tilde{\mu}$ is the posterior mean of effect size at the standardized genotype scale, $\Sigma$ is the LD reference panel.
+
+```{r}
+> R2 <- evalR2_XPASS(fit_bbj$mu,ref_EAS)
+> R2
+      PRS1       PRS2  PRS_XPASS
+0.02016132 0.01356299 0.02631185
+```
+
+While the reference panels have only limmited samples, XPASS still achieves 30% relative improvement in terms of $R^2$.
+
+
+
+
 # Development
+
 The XPASS package is developed by Mingxuan Cai (mcaiad@ust.hk).
+
+
 
 # Contact information
 
