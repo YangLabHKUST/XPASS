@@ -196,7 +196,7 @@ Done.
 
 ## XPASS output
 
-XPASS returns a list of results, the keyoutputs are:
+XPASS returns a list of results, some key outputs are:
 
 - H: a table of estimated heritabilities, co-heritability and genetic correlation (first row) and their corresponding standard erros (second row).
 
