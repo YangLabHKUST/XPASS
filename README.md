@@ -11,7 +11,7 @@ devtools::install_github("YangLabHKUST/XPASS")
 
 # Quick start
 
-We illustrate the usage of XPASS using the GWAS summary statistics of BMI from UKB and BBJ. For demonstration, we use the 1000 Genomes project genotypes as reference panels, which is easily accessible. __However, because these reference panels only contain 377 EAS amples and 417 EUR samples, optimal prediction accuracy of XPASS is not expected. In practice, it is suggested to use larger datasets as reference panels (n>2000). Therefore, we strongly suggest users to use their own reference panels with sufficiently large sample sizes.__ 
+We illustrate the usage of XPASS using the GWAS summary statistics of BMI from UKB and BBJ. For demonstration, we use the easily accessible 1000 Genomes project genotypes as reference panels. __However, because these reference panels only contain 377 EAS amples and 417 EUR samples, optimal prediction accuracy of XPASS is not expected. In practice, it is suggested to use larger datasets as reference panels (n>2000). Therefore, we strongly suggest users to use their own reference panels with sufficiently large sample sizes.__ 
 
 ## Data preparation
 
