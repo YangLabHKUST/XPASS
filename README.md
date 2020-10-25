@@ -264,7 +264,7 @@ where $z$ is the z-score of external summsry statistics, $n$ is its sample size,
 0.02016132 0.01356299 0.02631185
 ```
 
-While the reference panels have only limmited samples, XPASS still achieves 30% relative improvement in terms of $R^2$.
+While the reference panels have only limmited samples, XPASS still achieves 30% relative improvement compared to LDpred-inf in terms of $R^2$.
 
 
 
