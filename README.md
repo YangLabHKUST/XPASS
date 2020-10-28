@@ -258,7 +258,7 @@ $$R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\r
 where $z$ is the z-score of external summsry statistics, $n$ is its sample size, $\tilde{\mu}$ is the posterior mean of effect size at the standardized genotype scale, $\Sigma$ is the LD reference panel.
 
 ```{r}
-> R2 <- evalR2_XPASS(fit_bbj$mu,ref_EAS)
+> R2 <- evalR2_XPASS(fit_bbj$mu,BMI_bbj_female,ref_EAS)
 > R2
       PRS1       PRS2  PRS_XPASS
 0.02016132 0.01356299 0.02631185
