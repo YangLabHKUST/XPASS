@@ -261,7 +261,7 @@ where $z$ is the z-score of external summsry statistics, $n$ is its sample size,
 > R2 <- evalR2_XPASS(fit_bbj$mu,BMI_bbj_female,ref_EAS)
 > R2
       PRS1       PRS2  PRS_XPASS
-0.02016132 0.01356299 0.02631185
+0.02235596 0.01509865 0.02905665
 ```
 
 While the reference panels have only limmited samples, XPASS still achieves 30% relative improvement compared to LDpred-inf in terms of $R^2$.
