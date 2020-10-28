@@ -1,5 +1,7 @@
 # construct PRS with new genotype file
 predict_XPASS <- function(pm,file_predgeno){
+  psnp <- nrow(pm)
+
   geno <- read_data(file_predgeno,"zero")
   X <- geno$X
   rm(geno)
@@ -8,7 +10,7 @@ predict_XPASS <- function(pm,file_predgeno){
 
   # find common SNPs in test and training data
   snps <- intersect(pm$SNP,ref$V2)
-  if(length(snps)<nrow(ref)){
+  if(length(snps)!=psnp){
     warning("Test data and training data have different SNPs. This may reduce prediction accuracy. To avoid this problem, pecify the test genotype file in the `file_predgeno` argument in XPASS function to pre-mathc SNPs.")
   }
 
@@ -37,6 +39,8 @@ predict_XPASS <- function(pm,file_predgeno){
 
 # evalueate R2 using external summary statistics
 evalR2_XPASS <- function(pm,file_z_pred,file_predgeno){
+  psnp <- nrow(pm)
+
   geno <- read_data(file_predgeno,"zero")
   X <- geno$X
   rm(geno)
@@ -47,7 +51,7 @@ evalR2_XPASS <- function(pm,file_z_pred,file_predgeno){
   # find common SNPs in pm, test sumstats and test geno
   snps <- intersect(pm$SNP,ref$V2)
   snps <- intersect(snps,zf$SNP)
-  if(length(snps)<nrow(ref)){
+  if(length(snps)!=psnp){
     warning("Test data and training data have different SNPs. This may reduce prediction accuracy. To avoid this problem, pecify the test genotype file in the `file_predgeno` argument in XPASS function to pre-match SNPs.")
   }
 
@@ -71,8 +75,8 @@ evalR2_XPASS <- function(pm,file_z_pred,file_predgeno){
 
   # flip alleles in test sumstats
   zs <- zf$Z
-  idx_flip1 <- which(zf$V5%in%c("A","T")&pm$A1%in%c("C","G"))
-  idx_flip2 <- which(zf$V5%in%c("C","G")&pm$A1%in%c("A","T"))
+  idx_flip1 <- which(zf$A1%in%c("A","T")&pm$A1%in%c("C","G"))
+  idx_flip2 <- which(zf$A1%in%c("C","G")&pm$A1%in%c("A","T"))
   idx_flip <- c(idx_flip1,idx_flip2)
 
   zs[idx_flip] <- -zs[idx_flip]
@@ -81,6 +85,7 @@ evalR2_XPASS <- function(pm,file_z_pred,file_predgeno){
   betas <- data.matrix(pm[,c("mu1","mu2","mu_XPASS")])
   denom <- sqrt(colMeans((X%*%betas)^2))
 
+  # Xsd <- c(scaleC(X)$Xs)
   xsd <- apply(X,2,sd)
   R2 <- (colSums(zs*betas*xsd/sqrt(median(zf$N)))/denom)^2
   names(R2) <- c("PRS1","PRS2","PRS_XPASS")
