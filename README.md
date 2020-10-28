@@ -267,6 +267,7 @@ where $z$ is the z-score of external summsry statistics, $n$ is its sample size,
 While the reference panels have only limmited samples, XPASS still achieves 30% relative improvement compared to LDpred-inf in terms of $R^2$.
 
 
+An additional example for constructing PRS of Type 2 Disbetes can be found in [this PDF](https://github.com/YangLabHKUST/XPASS/blob/master/Manual_XPASS.pdf).
 
 
 # Development
