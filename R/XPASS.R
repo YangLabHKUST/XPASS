@@ -113,9 +113,8 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
 
   cat(sum(snps_rm)," SNPs are removed because of ambiguity; ",sum(!snps_rm)," SNPs remained.\n",sep = "")
 
-  # calculate kinship matrix if needed
-  if(is.null(K1)&is.null(K2)){
-    cat("Calculating kinship matrix from the both reference panels...\n")
+  # if compute posterior mean, need raw genotypes
+  if(compPosMean){
     if(is.null(X1)){
       ref1 <- read_data(file_ref1,fillMiss = "zero")
       X1 <- ref1$X[,idx_ref1]
@@ -128,6 +127,21 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
       X2 <- ref2$X[,idx_ref2]
     } else {
       X2 <- X2[,idx_ref2]
+    }
+  }
+
+
+  # calculate kinship matrix if needed
+  if(is.null(K1)&is.null(K2)){
+    cat("Calculating kinship matrix from the both reference panels...\n")
+    if(is.null(X1)){
+      ref1 <- read_data(file_ref1,fillMiss = "zero")
+      X1 <- ref1$X[,idx_ref1]
+    }
+
+    if(is.null(X2)){
+      ref2 <- read_data(file_ref2,fillMiss = "zero")
+      X2 <- ref2$X[,idx_ref2]
     }
 
     no_var <- apply(X1,2,function(x) all(diff(x)==0)) | apply(X2,2,function(x) all(diff(x)==0))
@@ -174,8 +188,6 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
     if(is.null(X1)){
       ref1 <- read_data(file_ref1,fillMiss = "zero")
       X1 <- ref1$X[,idx_ref1]
-    } else {
-      X1 <- X1[,idx_ref1]
     }
 
     no_var <- apply(X1,2,function(x) all(diff(x)==0))
@@ -202,8 +214,6 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
     if(is.null(X2)){
       ref2 <- read_data(file_ref2,fillMiss = "zero")
       X2 <- ref2$X[,idx_ref2]
-    } else {
-      X2 <- X2[,idx_ref2]
     }
 
     no_var <- apply(X2,2,function(x) all(diff(x)==0))
@@ -226,6 +236,14 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
     X2 <- tmp2$X
     K2 <- X2%*%t(X2)
   } else {
+    tmp1 <- scaleC(X1)
+    X1sd <- c(tmp1$Xs)
+    X1 <- tmp1$X
+
+    tmp2 <- scaleC(X2)
+    X2sd <- c(tmp2$Xs)
+    X2 <- tmp2$X
+
     no_var <- rep(F,nrow(zf1))
   }
 
@@ -317,7 +335,7 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
       # remove SNPs shhowing no variation in the training genotypes
       Xtest <- Xtest[,!no_var]
 
-      # align alleles in two reference panels based on the first ref
+      # align alleles in test genotype based on the first ref
       ind_ref <- ref1_info$A1!=test_info$A1
       if(sum(ind_ref)>0){
         Xtest[,ind_ref] <- 1-(Xtest[,ind_ref]-1)
