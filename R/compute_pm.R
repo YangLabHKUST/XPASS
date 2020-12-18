@@ -4,7 +4,7 @@ compute_pm <- function(z1,z2=NULL,X1=NULL,X2=NULL,h1,h2=NULL,h12=NULL,n1,n2=NULL
   # compute mu from first dataset
   S1 <- LDM1
   diag(S1) <- diag(S1) + (1-h1)/h1/n1
-  S1invz1 <-
+
   if(use_CG){
     S1invz1 <- conjugate_gradient(S1,z1,verbose=F)
   } else {
