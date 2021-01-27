@@ -1,6 +1,6 @@
 XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_cov2=NULL,file_predGeno=NULL,K1=NULL,K2=NULL,K12=NULL,X1=NULL,X2=NULL,
-                  snps_fe1=NULL,snps_fe2=snps_fe1,snp_list=NULL,
-                  sd_method="Chromosome",pop="EUR",ldw=NULL,compPosMean=F,use_CG=T,compPRS=F,file_out=""){
+                     snps_fe1=NULL,snps_fe2=NULL,snp_list=NULL,
+                     sd_method="Chromosome",pop="EUR",ldw=NULL,compPosMean=F,use_CG=T,compPRS=F,file_out=""){
   if(nchar(file_out)>0){
     cat("Writing to log file: ",file_out,".log\n",sep="")
     sink(paste0(file_out,".log"),append=F,split=T)
@@ -297,6 +297,11 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
   }
 
   cat("Calculate PVE...\n")
+  isfe1 <- snps_info$V2%in%snps_fe1
+  isfe2 <- snps_info$V2%in%snps_fe2
+  # isre <- !(isfe1|isfe2)
+  # fit <- corr_ss(z_score1[isre],z_score2[isre],K1,K2,K12,zf1$N[isre],zf2$N[isre],Z1=cbind(cov1,X1[,isfe1]),Z2=cbind(cov2,X2[,isfe2]),group = group)
+  # fit <- corr_ss(z_score1,z_score2,K1,K2,K12,zf1$N,zf2$N,Z1=cbind(cov1,X1[,isfe1]),Z2=cbind(cov2,X2[,isfe2]),group = group)
   fit <- corr_ss(z_score1,z_score2,K1,K2,K12,zf1$N,zf2$N,Z1=cov1,Z2=cov2,group = group)
 
   print(fit$H)
@@ -313,8 +318,8 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
       h12 <- fit$H[1,3]
     }
     ngroup <- length(unique(group))
-    mu <- matrix(NA,ncol(X1),4)
-    eff_type <- matrix(NA,ncol(X1),2)
+    mu <- matrix(0,ncol(X1),4)
+    eff_type <- matrix("RE",ncol(X1),2)
     cat("Compute posterior mean from ",ngroup," blocks ...\n")
     start_j <- 1
     for(j in 1:ngroup){
@@ -323,29 +328,29 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
 
       isfe1 <- snps_info$V2[idx_j]%in%snps_fe1
       isfe2 <- snps_info$V2[idx_j]%in%snps_fe2
-      if(sum(isfe1>0)){
+
+      LDMs1=t(X1[,idx_j])%*%X1[,idx_j]/nrow(X1)
+      LDMs2=t(X2[,idx_j])%*%X2[,idx_j]/nrow(X2)
+      if(sum(isfe1>0)|sum(isfe2)>0){
         # if some snps effects are fixed effects
 
         idx_fe1 <- idx_j[isfe1]
         idx_fe2 <- idx_j[isfe2]
-        idx_re <- idx_j[!(isfe1|isfe2)]
 
-        LDMs1=t(X1[,idx_re])%*%X1[,idx_re]/nrow(X1)
         LDMl1=t(X1[,idx_fe1])%*%X1[,idx_fe1]/nrow(X1)
-        LDMsl1=t(X1[,idx_re])%*%X1[,idx_fe1]/nrow(X1)
+        LDMsl1=t(X1[,idx_j])%*%X1[,idx_fe1]/nrow(X1)
 
-        LDMs2=t(X2[,idx_re])%*%X2[,idx_re]/nrow(X2)
         LDMl2=t(X2[,idx_fe2])%*%X2[,idx_fe2]/nrow(X2)
-        LDMsl2=t(X2[,idx_re])%*%X2[,idx_fe2]/nrow(X2)
+        LDMsl2=t(X2[,idx_j])%*%X2[,idx_fe2]/nrow(X2)
 
-        out_fe <- compute_fe(zs1 = z_score1[idx_re],zs2 = z_score2[idx_re],
+        out_fe <- compute_fe(zs1 = z_score1[idx_j],zs2 = z_score2[idx_j],
                              zl1 = z_score1[idx_fe1],zl2 = z_score2[idx_fe2],
                              LDMs1=LDMs1,LDMl1=LDMl1,LDMsl1=LDMsl1,
                              LDMs2=LDMs2,LDMl2=LDMl2,LDMsl2=LDMsl2,
                              h1 = fit$H[1,1],h2 = fit$H[1,2],h12 = h12,n1 = median(zf1$N),n2 = median(zf2$N),p=ncol(X1),use_CG=use_CG)
 
-        LDMslB1 <- LDMsl1 %*% out_fe$beta1
-        LDMslB2 <- LDMsl2 %*% out_fe$beta2
+        LDMslB1 <- LDMsl1 %*% out_fe$beta_XPASS1
+        LDMslB2 <- LDMsl2 %*% out_fe$beta_XPASS2
 
         mu[idx_fe1,1] <- out_fe$beta1
         mu[idx_fe2,2] <- out_fe$beta2
@@ -356,19 +361,13 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
         eff_type[idx_fe2,2] <- "FE"
       } else{
         # if no fixed effects, all snps are random effects
-        idx_re <- idx_j
         LDMslB1 <- NULL
         LDMslB2 <- NULL
-        LDMs1=t(X1[,idx_re])%*%X1[,idx_re]/nrow(X1)
-        LDMs2=t(X2[,idx_re])%*%X2[,idx_re]/nrow(X2)
       }
-      mu[idx_re,] <- compute_pm2(z1 = z_score1[idx_re],z2 = z_score2[idx_re],
-                                 LDM1 = LDMs1,LDM2 = LDMs2,
-                                 LDMslB1=LDMslB1,LDMslB2=LDMslB2,
-                                 h1 = fit$H[1,1],h2 = fit$H[1,2],h12 = h12,n1 = median(zf1$N),n2 = median(zf2$N),p=ncol(X1),use_CG=use_CG)
-
-      eff_type[idx_re,1] <- "RE"
-      eff_type[idx_re,2] <- "RE"
+      mu[idx_j,] <- mu[idx_j,] + compute_pm2(z1 = z_score1[idx_j],z2 = z_score2[idx_j],
+                                             LDM1 = LDMs1,LDM2 = LDMs2,
+                                             LDMslB1=LDMslB1,LDMslB2=LDMslB2,
+                                             h1 = fit$H[1,1],h2 = fit$H[1,2],h12 = h12,n1 = median(zf1$N),n2 = median(zf2$N),p=ncol(X1),use_CG=use_CG)
 
       start_j <- end_j + 1
       cat("Block",j,"/",ngroup," finished. \n")
