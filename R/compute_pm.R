@@ -129,6 +129,7 @@ compute_pm2 <- function(z1,z2=NULL,X1=NULL,X2=NULL,h1,h2=NULL,h12=NULL,n1,n2=NUL
     mu_XPASS2 <- Sinvz[(p_block+1):(2*p_block)]
 
     ret <- cbind(mu1,mu2,mu_XPASS1,mu_XPASS2)
+    # ret <- list(out=cbind(mu1,mu2,mu_XPASS1,mu_XPASS2),Delta=Delta,invDelta=invDelta,S=S,tmp1,tmp2=tmp2)
   }
   return(ret)
 }
@@ -138,64 +139,70 @@ compute_pm2 <- function(z1,z2=NULL,X1=NULL,X2=NULL,h1,h2=NULL,h12=NULL,n1,n2=NUL
 
 #  X1 and X2 are standardized with mean 0 and variance 1/(p*m)
 # compute_pm2 directly solves 2p by 2p linear system. It is faster.
-compute_fe <- function(zs1,zl1,zs2=NULL,zl2=NULL,Xs1=NULL,Xs2=NULL,Xl1=NULL,Xl2=NULL,h1,h2=NULL,h12=NULL,n1,n2=NULL,p,
+compute_fe <- function(zs1,zl1=NULL,zs2=NULL,zl2=NULL,Xs1=NULL,Xs2=NULL,Xl1=NULL,Xl2=NULL,h1,h2=NULL,h12=NULL,n1,n2=NULL,p,
                        LDMs1=t(Xs1)%*%Xs1,LDMl1=t(Xl1)%*%Xl1,LDMsl1=t(Xs1)%*%Xl1,
                        LDMs2=t(Xs2)%*%Xs2,LDMl2=t(Xl2)%*%Xl2,LDMsl2=t(Xs2)%*%Xl2,use_CG=T){
   p_small <- ncol(LDMs1)
   p_large1 <- ncol(LDMl1)
   p_large2 <- ncol(LDMl2)
 
-  # compute mu1 from the first dataset
-  S1 <- n1*LDMs1
-  diag(S1) <- diag(S1) + (1-h1)/h1
+  if(length(zl1>0)){
+    # compute mu1 from the first dataset
+    S1 <- n1*LDMs1
+    diag(S1) <- diag(S1) + (1-h1)/h1
 
-  tmp1 <- sqrt(n1/p) * zs1
+    tmp1 <- sqrt(n1/p) * zs1
 
-  if(use_CG){
-    Sinvz1 <- conjugate_gradient(S1,tmp1,verbose=F)
+    if(use_CG){
+      Sinvz1 <- conjugate_gradient(S1,tmp1,verbose=F)
+    } else {
+      invS1 <- chol2inv(chol(S1))
+      Sinvz1 <- invS1%*%tmp1
+    }
+
+    b1 <- sqrt(n1/p) * zl1-t(n1*LDMsl1)%*%Sinvz1
+
+    if(use_CG){
+      SinvLDMsl1 <- apply(n1*LDMsl1,2,function(b) conjugate_gradient(A=S1,b=b,verbose=F))
+    } else {
+      SinvLDMsl1 <- invS1%*%(n1*LDMsl1)
+    }
+
+    A1 <- n1*LDMl1 - t(n1*LDMsl1) %*% SinvLDMsl1
+
+    beta1 <- conjugate_gradient(A1,b1,verbose = F)
   } else {
-    invS1 <- chol2inv(chol(S1))
-    Sinvz1 <- invS1%*%tmp1
+    beta1 <- numeric(0)
   }
 
-  b1 <- sqrt(n1/p) * zl1-t(n1*LDMsl1)%*%Sinvz1
+  if(length(zl2>0)){
+    # compute mu2 from the second dataset
+    S2 <- n2*LDMs2
+    diag(S2) <- diag(S2) + (1-h2)/h2
 
-  if(use_CG){
-    SinvLDMsl1 <- apply(n1*LDMsl1,2,function(b) conjugate_gradient(A=S1,b=b,verbose=F))
+    tmp2 <- sqrt(n2/p) * zs2
+
+    if(use_CG){
+      Sinvz2 <- conjugate_gradient(S2,tmp2,verbose=F)
+    } else {
+      invS2 <- chol2inv(chol(S2))
+      Sinvz2 <- invS2%*%tmp2
+    }
+
+    b2 <- sqrt(n2/p) * zl2-t(n2*LDMsl2)%*%Sinvz2
+
+    if(use_CG){
+      SinvLDMsl2 <- apply(n2*LDMsl2,2,function(b) conjugate_gradient(A=S2,b=b,verbose=F))
+    } else {
+      SinvLDMsl2 <- invS2%*%(n2*LDMsl2)
+    }
+
+    A2 <- n2*LDMl2 - t(n2*LDMsl2) %*% SinvLDMsl2
+
+    beta2 <- conjugate_gradient(A2,b2,verbose = F)
   } else {
-    SinvLDMsl1 <- invS1%*%(n1*LDMsl1)
+    beta2 <- numeric(0)
   }
-
-  A1 <- n1*LDMl1 - t(n1*LDMsl1) %*% SinvLDMsl1
-
-  beta1 <- conjugate_gradient(A1,b1,verbose = F)
-
-  ret <- matrix(beta1)
-
-  # compute mu2 from the second dataset
-  S2 <- n2*LDMs2
-  diag(S2) <- diag(S2) + (1-h2)/h2
-
-  tmp2 <- sqrt(n2/p) * zs2
-
-  if(use_CG){
-    Sinvz2 <- conjugate_gradient(S2,tmp2,verbose=F)
-  } else {
-    invS2 <- chol2inv(chol(S2))
-    Sinvz2 <- invS2%*%tmp2
-  }
-
-  b2 <- sqrt(n2/p) * zl2-t(n2*LDMsl2)%*%Sinvz2
-
-  if(use_CG){
-    SinvLDMsl2 <- apply(n2*LDMsl2,2,function(b) conjugate_gradient(A=S2,b=b,verbose=F))
-  } else {
-    SinvLDMsl2 <- invS2%*%(n2*LDMsl2)
-  }
-
-  A2 <- n2*LDMl2 - t(n2*LDMsl2) %*% SinvLDMsl2
-
-  beta2 <- conjugate_gradient(A2,b2,verbose = F)
 
   # compute mu_XPASS from both datasets
   Delta <- matrix(c(h1/(1-h1),h12/(1-h1),h12/(1-h2),h2/(1-h2)),2,2)
@@ -240,7 +247,19 @@ compute_fe <- function(zs1,zl1,zs2=NULL,zl2=NULL,Xs1=NULL,Xs2=NULL,Xl1=NULL,Xl2=
   # beta_XPASS1 <- LDMl1%*%tmp1 - t(LDMsl1)%*%Sinvtmp[1:p_small]/n1
   # beta_XPASS2 <- LDMl2%*%tmp2 - t(LDMsl2)%*%Sinvtmp[(p_small+1):(2*p_small)]/n2
 
-  ret <- list(beta1=beta1,beta2=beta2,beta_XPASS1=beta_XPASS[1:p_large1],beta_XPASS2=beta_XPASS[(p_large1+1):(p_large1+p_large2)])
+  if(length(zl1)>0){
+    beta_XPASS1 <- beta_XPASS[1:p_large1]
+  } else{
+    beta_XPASS1 <- numeric(0)
+  }
+
+  if(length(zl2)>0){
+    beta_XPASS2 <- beta_XPASS[(p_large1+1):(p_large1+p_large2)]
+  } else{
+    beta_XPASS2 <- numeric(0)
+  }
+
+  ret <- list(beta1=beta1,beta2=beta2,beta_XPASS1=beta_XPASS1,beta_XPASS2=beta_XPASS2)
 
   return(ret)
 }
