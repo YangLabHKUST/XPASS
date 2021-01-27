@@ -30,8 +30,8 @@ predict_XPASS <- function(pm,file_predgeno){
   X[,idx_flip] <- 2-X[idx_flip]
 
   # compute PRS
-  PRS <- X %*% data.matrix(pm[,c("mu1","mu2","mu_XPASS")])
-  colnames(PRS) <- c("PRS1","PRS2","PRS_XPASS")
+  PRS <- X %*% data.matrix(pm[,c("mu1","mu2","mu_XPASS1","mu_XPASS2")])
+  colnames(PRS) <- c("PRS1","PRS2","PRS_XPASS1","PRS_XPASS2")
   PRS <- data.frame(FID=fam$V1,IID=fam$V2,PRS)
 
 }
@@ -82,13 +82,13 @@ evalR2_XPASS <- function(pm,file_z_pred,file_predgeno){
   zs[idx_flip] <- -zs[idx_flip]
 
   # compute R2
-  betas <- data.matrix(pm[,c("mu1","mu2","mu_XPASS")])
+  betas <- data.matrix(pm[,c("mu1","mu2","mu_XPASS1","mu_XPASS2")])
   denom <- sqrt(colMeans((X%*%betas)^2))
 
   # Xsd <- c(scaleC(X)$Xs)
   xsd <- apply(X,2,sd)
   R2 <- (colSums(zs*betas*xsd/sqrt(median(zf$N)))/denom)^2
-  names(R2) <- c("PRS1","PRS2","PRS_XPASS")
+  names(R2) <- c("PRS1","PRS2","PRS_XPASS1","PRS_XPASS2")
 
   return(R2)
 }
