@@ -11,4 +11,4 @@ Encoding: UTF-8
 LazyData: true
 Imports: Rcpp (>= 1.0.4.6)
 LinkingTo: Rcpp,RcppArmadillo,BH
-Depends: RcppArmadillo,BH,pROC
+Depends: RcppArmadillo,BH,pROC,magic
