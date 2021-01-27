@@ -208,7 +208,7 @@ XPASS returns a list of results, some key outputs are:
 
 ```
 
-- mu: a data frame storing the posterior means computed by LDpred-inf using only the target dataset (mu1) and only the auxiliary dataset (mu2), and the posterior mean computed by XPASS (mu_XPASS). SNPs information is also returned: A1 is the effect allele, A2 is the other allele.
+- mu: a data frame storing the posterior means computed by LDpred-inf using only the target dataset (mu1) and only the auxiliary dataset (mu2), and the posterior means of the target population and the auxiliary population computed by XPASS (mu_XPASS1 and mu_XPASS2). In eff_type1 and eff_type2 columns, "RE" indicates the SNP effect is random effect and "FE" indicates the effect is treated as population-specific fixed effect in the corresponding populations. SNPs information is also returned: A1 is the effect allele, A2 is the other allele.
 
 ```{r}
 > head(fit_bbj$mu)
@@ -219,7 +219,7 @@ XPASS returns a list of results, some key outputs are:
 4   1 rs2340582 882803  A  G -3.396992e-04 -0.0012885694 -0.0008076512
 5   1 rs4246503 884815  A  G -3.318260e-04 -0.0013238182 -0.0008148704
 6   1 rs3748597 888659  T  C -3.327131e-04 -0.0013031399 -0.0008113772
-
+      mu_XPASS2 eff_type1 eff_type2
 1 -0.0003319743        RE        RE
 2 -0.0003509346        RE        RE
 3 -0.0014312273        RE        RE
@@ -228,7 +228,7 @@ XPASS returns a list of results, some key outputs are:
 6 -0.0014623186        RE        RE
 ```
 
-- PRS (if file_predGeno provided and compPRS=T): a data frame storing the PRS generated using mu1, mu2 and mu_XPASS, respectively.
+- PRS (if file_predGeno provided and compPRS=T): a data frame storing the PRS generated using mu1, mu2, mu_XPASS1, and mu_XPASS2, respectively.
 
 ```{r}
 > head(fit_bbj$PRS)
@@ -243,13 +243,13 @@ XPASS returns a list of results, some key outputs are:
 # One can also compute PRS after fitting the model:
 > PRS <- predict_XPASS(fit_bbj$mu,ref_EAS)
 > head(PRS)
-      FID     IID        PRS1       PRS2  PRS_XPASS
-1 HG00403 HG00403  0.14310343 0.92040953 0.55960909
-2 HG00404 HG00404 -0.19478307 0.63289820 0.03773899
-3 HG00406 HG00406 -0.09440555 0.69099450 0.14173516
-4 HG00407 HG00407  0.05533466 0.07036618 0.05091082
-5 HG00409 HG00409  0.25063980 1.54556843 0.83527097
-6 HG00410 HG00410  0.13454734 0.23143305 0.10214319
+      FID     IID        PRS1      PRS2 PRS_XPASS1 PRS_XPASS2
+1 HG00403 HG00403  0.14310344 1.1430451 0.55960910  1.1638272
+2 HG00404 HG00404 -0.19478304 0.7149414 0.03773900  0.6465811
+3 HG00406 HG00406 -0.09440555 0.8028816 0.14173517  0.7110257
+4 HG00407 HG00407  0.05533467 0.1135734 0.05091083  0.1354040
+5 HG00409 HG00409  0.25063980 1.9968242 0.83527097  1.9851891
+6 HG00410 HG00410  0.13454737 0.2543978 0.10214320  0.2608015
 ```
 
 XPASS will also write above outputs into the files with `file_out` prefix, if provided.
