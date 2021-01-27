@@ -273,6 +273,39 @@ where $z$ is the z-score of external summsry statistics, $n$ is its sample size,
 
 While the reference panels have only limmited samples, XPASS still achieves 30% relative improvement compared to LDpred-inf in terms of $R^2$.
 
+## XPASS+
+
+XPASS+ allows the population-specific effects to be utilized in PRS construction. To fit XPASS+, we first need to apply the P+T procedure to construct a set of pre-selected SNPs that are population-specific. Here, we use the ieugwasr package.
+
+```{r}
+library(ieugwasr)
+z_bbj <- fread(BMI_bbj_male) # read summary statistics file
+pval <- data.frame(rsid=z_bbj$SNP,pval=2*pnorm(abs(z_bbj$Z),lower.tail=F))
+
+# P+T procedure
+clp_bbj <- ld_clump(pval, clump_kb=1000, clump_r2=0.1, clump_p=1e-6,
+                       bfile=ref_EAS,
+                       plink_bin="/import/home/mcaiad/plink/plink")
+snps_l <- clp_bbj$rsid
+```
+The rs id of pre-selected SNPs are stored in `snps_l`, which is then passed to the `snps_fe1` argument in `XPASS` function.
+```{r}
+fit_bbj <-XPASS(file_z1 = BMI_bbj_male,file_z2 = BMI_ukb,file_ref1 = ref_EAS,
+                file_ref2 = ref_EUR,
+                file_cov1 = cov_EAS,file_cov2 = cov_EUR,
+                file_predGeno = BMI_test,
+                snps_fe1 = snps_l,
+                compPRS=T,
+                pop = "EAS",sd_method="LD_block",compPosMean = T,
+                file_out = "BMI_bbj_ukb_plus_ref_TGP")
+R2 <- evalR2_XPASS(fit_bbj$mu,BMI_bbj_female,ref_EAS)
+```
+```{r}
+> R2
+      PRS1       PRS2 PRS_XPASS1 PRS_XPASS2
+0.02562267 0.01638359 0.03149972 0.01963232
+```
+As we can see, XPASS+ provides 3% improvement in predictive $R^2$ compared to XPASS.
 
 An additional example for constructing PRS of Type 2 Disbetes can be found in [this PDF](https://github.com/YangLabHKUST/XPASS/blob/master/Manual_XPASS.pdf).
 
