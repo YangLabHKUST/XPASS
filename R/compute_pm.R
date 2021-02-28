@@ -119,11 +119,7 @@ compute_pm2 <- function(z1,z2=NULL,X1=NULL,X2=NULL,h1,h2=NULL,h12=NULL,n1,n2=NUL
     S[(p_block+1):(2*p_block),1:p_block] <- diag(invDelta[2,1],p_block)
     S[1:p_block,(p_block+1):(2*p_block)] <- diag(invDelta[1,2],p_block)
 
-    if(use_CG){
-      Sinvz <- conjugate_gradient(S,c(tmp1,tmp2),verbose=F)
-    } else {
-      Sinvz <- chol2inv(chol(S))%*%c(tmp1,tmp2)
-    }
+    Sinvz <- solve(S,c(tmp1,tmp2))
 
     mu_XPASS1 <- Sinvz[1:p_block]
     mu_XPASS2 <- Sinvz[(p_block+1):(2*p_block)]
@@ -223,19 +219,14 @@ compute_fe <- function(zs1,zl1=NULL,zs2=NULL,zl2=NULL,Xs1=NULL,Xs2=NULL,Xl1=NULL
   tmp1 <- sqrt(n1/p) * zs1
   tmp2 <- sqrt(n2/p) * zs2
 
-  if(use_CG){
-    Sinvz <- conjugate_gradient(S,c(tmp1,tmp2),verbose=F)
-  } else {
-    invS <- chol2inv(chol(S))
-    Sinvz <- invS%*%c(tmp1,tmp2)
-  }
+  Sinvz <- solve(S,c(tmp1,tmp2))
 
   b1 <- sqrt(n1/p)*zl1 - t(n1*LDMsl1)%*%Sinvz[1:p_small]
   b2 <- sqrt(n2/p)*zl2 - t(n2*LDMsl2)%*%Sinvz[(p_small+1):(2*p_small)]
 
   LDMsl <- adiag(n1*LDMsl1,n2*LDMsl2)
   if(use_CG){
-    SinvLDMsl <- apply(LDMsl,2,function(b) conjugate_gradient(A=S,b=b,verbose=F))
+    SinvLDMsl <- apply(LDMsl,2,function(b) solve(a=S,b=b))
   } else {
     SinvLDMsl <- invS%*%LDMsl
   }
