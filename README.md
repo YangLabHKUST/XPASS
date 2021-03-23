@@ -322,7 +322,7 @@ fit_both <-XPASS(file_z1 = BMI_bbj_male,file_z2 = BMI_ukb,file_ref1 = ref_EAS,
                  file_cov1 = cov_EAS,file_cov2 = cov_EUR,
                  file_predGeno = BMI_test,
                  snps_fe1 = snps_bbj,
-                 snps_fe2 = snps_bbj,
+                 snps_fe2 = snps_ukb,
                  compPRS=T,
                  pop = "EAS",sd_method="LD_block",compPosMean = T,
                  file_out = "BMI_bbj_ukb_plus_ref_TGP")
