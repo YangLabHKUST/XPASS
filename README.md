@@ -279,10 +279,10 @@ XPASS+ allows the population-specific effects to be utilized in PRS construction
 
 ```{r}
 library(ieugwasr)
+# P+T procedure for bbj
 z_bbj <- fread(BMI_bbj_male) # read summary statistics file
 pval <- data.frame(rsid=z_bbj$SNP,pval=2*pnorm(abs(z_bbj$Z),lower.tail=F))
 
-# P+T procedure
 clp_bbj <- ld_clump(pval, clump_kb=1000, clump_r2=0.1, clump_p=1e-6,
                        bfile=ref_EAS,
                        plink_bin="/import/home/mcaiad/plink/plink")
@@ -305,7 +305,35 @@ R2 <- evalR2_XPASS(fit_bbj$mu,BMI_bbj_female,ref_EAS)
       PRS1       PRS2 PRS_XPASS1 PRS_XPASS2
 0.02562267 0.01638359 0.03149972 0.01963232
 ```
-As we can see, XPASS+ provides 3% improvement in predictive $R^2$ compared to XPASS.
+By including the population-specific effects, XPASS+ achieves 3.15% predictive R^2, offering 8% improvement compared to XPASS. 
+
+While in the above example we only include population-specific effects in the target population, our implementation of XPASS+ allows the inclusion of such effects for both populations. To include fixed effects in both populations, the pre-selected SNPs for corresponding populations should be passed to `snps_fe1` and `snps_fe2` arguments, respectively.
+```{r}
+# P+T procedure for ukb
+z_ukb <- fread(BMI_ukb) # read summary statistics file
+pval <- data.frame(rsid=z_ukb$SNP,pval=2*pnorm(abs(z_ukb$Z),lower.tail=F))
+clp_ukb <- ld_clump(pval, clump_kb=1000, clump_r2=0.1, clump_p=1e-10,
+                    bfile=ref_EUR,
+                    plink_bin="/import/home/mcaiad/plink/plink")
+snps_ukb <- clp_ukb$rsid
+
+fit_both <-XPASS(file_z1 = BMI_bbj_male,file_z2 = BMI_ukb,file_ref1 = ref_EAS,
+                 file_ref2 = ref_EUR,
+                 file_cov1 = cov_EAS,file_cov2 = cov_EUR,
+                 file_predGeno = BMI_test,
+                 snps_fe1 = snps_bbj,
+                 snps_fe2 = snps_bbj,
+                 compPRS=T,
+                 pop = "EAS",sd_method="LD_block",compPosMean = T,
+                 file_out = "BMI_bbj_ukb_plus_ref_TGP")
+R2 <- evalR2_XPASS(fit_both$mu,BMI_bbj_female,ref_EAS)
+```
+```{r}
+> R2
+      PRS1       PRS2 PRS_XPASS1 PRS_XPASS2
+0.02353173 0.01192856 0.03294502 0.01419943
+```
+This yields similar results when only the population-specific effects are included only in the target population.
 
 An additional example for constructing PRS of Type 2 Disbetes can be found in [this PDF](https://github.com/YangLabHKUST/XPASS/blob/master/Manual_XPASS.pdf).
 
