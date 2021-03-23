@@ -333,7 +333,7 @@ R2 <- evalR2_XPASS(fit_both$mu,BMI_bbj_female,ref_EAS)
       PRS1       PRS2 PRS_XPASS1 PRS_XPASS2
 0.02353173 0.01192856 0.03294502 0.01419943
 ```
-This yields similar results when only the population-specific effects are included only in the target population.
+This yields similar results when the population-specific effects are included only in the target population.
 
 An additional example for constructing PRS of Type 2 Disbetes can be found in [this PDF](https://github.com/YangLabHKUST/XPASS/blob/master/Manual_XPASS.pdf).
 
