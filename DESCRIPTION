@@ -1,14 +1,14 @@
 Package: XPASS
 Type: Package
-Title: What the Package Does (Title Case)
+Title: The XPASS package for corss-population trait prediction using GWAS summary statistics
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Authors: Mingxuan CAI
+Maintainer: Mingxaun CAI <mcaiad@ust.hk>
+Description: This package implements the XPASS and XPASS+ approaches for cross-population trait prediction using GWAS summary statistics.
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 Imports: Rcpp (>= 1.0.4.6)
 LinkingTo: Rcpp,RcppArmadillo,BH
 Depends: RcppArmadillo,BH,pROC,magic
+RoxygenNote: 6.1.1
