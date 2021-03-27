@@ -112,7 +112,7 @@ evalR2_XPASS <- function(pm,file_z_pred,file_predgeno){
   # Xsd <- c(scaleC(X)$Xs)
   xsd <- apply(X,2,sd)
   R2 <- (colSums(zs*betas*xsd/sqrt(median(zf$N)))/denom)^2
-  names(R2) <- c("PRS1","PRS2","PRS_XPASS1","PRS_XPAS2")
+  names(R2) <- c("PRS1","PRS2","PRS_XPASS1","PRS_XPASS2")
 
   return(R2)
 }
