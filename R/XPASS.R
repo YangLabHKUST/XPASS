@@ -1,6 +1,46 @@
+#'@title  Main function for XPASS
+#'@description XPASS: a unified framework for cross-population trait prediction with GWAS summary statistics.
+#'This function provides both XPASS and XPASS+ implementation
+#'
+#' @param file_z1  Z-score file for population one. Five columns are required with column names SNP, N, Z, A1, A2. A1 is the effect allele.
+#' @param file_z2  Z-score file for population two. Same format with file_z1. Note that file_z1 and file_z2 are exchangeable, both can be target or auxiliary dataset.
+#' @param file_ref1 Prefix of file name/path of reference genotypes corresponding to file_z1 in bed format. Exclude the .bim/.bed/.fam. extensions in the path name.
+#' @param file_ref2 Prefix of file name/path of reference genotypes corresponding to file_z2 in bed format.
+#' @param file_cov1 Covariates file associated with the reference genotypes file_ref1. The covariates files should not include row names and column names. The rows should be exactly corresponding to the individuals in the .fam file of reference genotypes. Each column corresponds to one covariate. A column of one should not be included in the file.
+#' @param file_cov2 Covariates file associated with the reference genotypes file_ref2. Same format with file_cov2.
+#' @param file_predGeno File name/path of the genotypes of prediction dataset.
+#' @param K1 n1 by n1 kingship matrix computed from file_ref1. Can improve computational efficiency if provided. If not provided, K1 will be computed from file_ref1.
+#' @param K2 n2 by n2 kingship matrix computed from file_ref2. Can improve computational efficiency if provided. If not provided, K2 will be computed from file_ref2.
+#' @param K12 n1 by n2 Cross-population kingship matrix computed from file_ref1 and file_ref2. Can improve computational efficiency if provided. If not provided, K12 will be computed from file_ref1 and file_ref2.
+#' @param X1 n1 by p Raw genotype matrix from file_ref1. Can improve computational efficiency if provided. If not provided, X1 will be read from file_ref1.
+#' @param X2 n2 by p Raw genotype matrix from file_ref2. Can improve computational efficiency if provided. If not provided, X2 will be read from file_ref2.
+#' @param snps_fe1 A vector containing the SNP rs id to be included as population one-specific fixed effects in XPASS+.
+#' @param snps_fe2 A vector containing the SNP rs id to be included as population two-specific fixed effects in XPASS+.
+#' @param snps_list A vector containing the SNP rs id to be included in the analysis. The intersection of this list and SNPs from file_z1, file_z2, file_ref1 and file_ref2 will be used in the XPASS analysis.
+#' @param sd_method A character string indicating the method to obtain the Jackknife standard error of parameter estimates. Should be one of "Chromosome', "LD_block" and "Jackknife", corresponding to chromosome based, LD-block (of population one) based, and SNP based Jackknife.
+#' @param pop A character string indicating from which population the LD partions should be used. Currently support "EUR" and "EAS". Default is "EUR".
+#' @param compPosMean TRUE/FALSE indicating whether to compute the posterior mean of effect sizes. Default is TRUE.
+#' @param use_CG TRUE/FALSE indicating whether to use conjugate gradient to solve for the posterior mean. Default is TRUE.
+#' @param compPRS TRUE/FALSE indicating whether to compute the PRS when file_predGeno is not NULL. If FALSE, one can use the function predict_XPASS to obtain the PRS later.
+#' @param file_out A character string of the prefix of output file name.
+#'
+#'
+#' @return a list with the following elements:
+#' \describe{
+#' \item{H: }{4 by 2 matrix of estimated heritabilities, co-heritability and genetic correlation (first row) and their corresponding standard erros (second row)}
+#' \item{mu: }{A data frame storing the posterior means computed by LDpred-inf using only the target dataset (mu1) and only the auxiliary dataset (mu2), and the posterior means of the target population and the auxiliary population computed by XPASS (mu_XPASS1 and mu_XPASS2). In eff_type1 and eff_type2 columns, "RE" indicates the SNP effect is random effect and "FE" indicates the effect is treated as population-specific fixed effect in the corresponding populations. SNPs information is also returned: A1 is the effect allele, A2 is the other allele.}
+#' \item{PRS (if file_predGeno provided and compPRS=T): }{A data frame storing the PRS generated using mu1, mu2, mu_XPASS1, and mu_XPASS2, respectively.}
+#' \item{snps: }{Final SNPs included in the analysis.}
+#' \item{fit: }{An object returned by the parameter estimation function corr_ss.}
+#' }
+#'
+#' @examples
+#' See vignette.
+#' @export
+
 XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_cov2=NULL,file_predGeno=NULL,K1=NULL,K2=NULL,K12=NULL,X1=NULL,X2=NULL,
-                     snps_fe1=NULL,snps_fe2=NULL,snp_list=NULL,
-                     sd_method="Chromosome",pop="EUR",ldw=NULL,compPosMean=F,use_CG=T,compPRS=F,file_out=""){
+                  snps_fe1=NULL,snps_fe2=NULL,snp_list=NULL,
+                  sd_method="Chromosome",pop="EUR",compPosMean=T,use_CG=T,compPRS=F,file_out=""){
   if(nchar(file_out)>0){
     cat("Writing to log file: ",file_out,".log\n",sep="")
     sink(paste0(file_out,".log"),append=F,split=T)
@@ -308,7 +348,6 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
   ret <- c(fit,snps=list(snps))
 
   if(compPosMean){
-    # if(is.null(ldw)) ldw <- ncol(X1)/1500
     # Set rho=0.99 (-0.99) if it exceed 1 (-1).
     # h12 <- ifelse(fit$H[1,4]>1,fit$H[1,1]*fit$H[1,2],fit$H[1,3])
     if(abs(fit$H[1,4])>1){
