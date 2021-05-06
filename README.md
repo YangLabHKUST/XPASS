@@ -26,7 +26,7 @@ Input files of XPASS includ:
 - covariates file associated with the target population reference panel. The covariates files can include sex, age and population information of the individuals from the reference panel.
 - covariates file associated with the auxiliary population reference panel
 
-Different from LDSC, which only utilizes LD from local SNPs, XPASS uses the LD information from the entire chromosomes to estimate heritability and coheritability. While this approach can produce smaller standard error compared to LDSC, the estimated heritability and coheritability can be biased if population structures in the reference pannel are not properly corrected. Therefore, while the covariates files are optional, we strongly suggest users to include them when using XPASS. 
+Different from LDSC, which only utilizes LD from local SNPs, XPASS uses the LD information from the entire chromosomes to estimate heritability and coheritability. This approach can yields smaller standard error, but requires the population structures in the reference pannel to be properly corrected by including the covariates. Otherwise, the estimated heritability and coheritability can be biased by the population structures. Therefore, while the covariates files are optional, we strongly suggest users to include them when using XPASS. 
 
 The XPASS format GWAS summary statistics file has 5 fields:
 
