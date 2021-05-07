@@ -350,8 +350,10 @@ Common issues are discussed in [FAQ](https://github.com/YangLabHKUST/XPASS/wiki/
 
 The XPASS package is developed by Mingxuan Cai (mcaiad@ust.hk).
 
-
-
 # Contact information
 
 Please contact Mingxuan Cai (mcaiad@ust.hk) or Prof. Can Yang (macyang@ust.hk) if any enquiry.
+
+# Reference
+
+Mingxuan Cai, Jiashun Xiao, Shunkang Zhang, Xiang Wan, Hongyu Zhao, Gang Chen, Can Yang. A uniﬁed framework for cross-population trait prediction by leveraging the genetic correlation of polygenic traits. The American Journal of Human Genetics. [AJHG link]. 108, 632-655, April 2021.
