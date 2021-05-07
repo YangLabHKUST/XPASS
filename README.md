@@ -344,6 +344,7 @@ An additional example for constructing PRS of Type 2 Disbetes can be found in [t
 
 # FAQ
 
+Common issues are discussed in [FAQ](https://github.com/YangLabHKUST/XPASS/wiki/FAQ)
 
 # Development
 
