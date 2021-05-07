@@ -356,4 +356,4 @@ Please contact Mingxuan Cai (mcaiad@ust.hk) or Prof. Can Yang (macyang@ust.hk) i
 
 # Reference
 
-Mingxuan Cai, Jiashun Xiao, Shunkang Zhang, Xiang Wan, Hongyu Zhao, Gang Chen, Can Yang. A uniﬁed framework for cross-population trait prediction by leveraging the genetic correlation of polygenic traits. The American Journal of Human Genetics. [AJHG link]. 108, 632-655, April 2021.
+Mingxuan Cai, Jiashun Xiao, Shunkang Zhang, Xiang Wan, Hongyu Zhao, Gang Chen, Can Yang. A uniﬁed framework for cross-population trait prediction by leveraging the genetic correlation of polygenic traits. The American Journal of Human Genetics. 108, 632-655, April 2021.
