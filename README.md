@@ -11,7 +11,7 @@ devtools::install_github("YangLabHKUST/XPASS")
 
 # Quick start
 
-We illustrate the usage of XPASS using the GWAS summary statistics of BMI from UKB and BBJ. For demonstration, we use the easily accessible 1000 Genomes project genotypes as reference panels. __However, because these reference panels only contain 1.3 millions of SNPs from 377 EAS amples and 417 EUR samples, the result of XPASS is slightly less accurate than what we reported in the AJHG paper. The performance of XPASS can be better when a GWAS dataset with a larger sample size (e.g.,n>2000) and more SNPs (e.g., 3M) is used as the reference panel. We strongly suggest that users use their own reference panels with sufficiently large sample sizes if available.__ 
+We illustrate the usage of XPASS using the GWAS summary statistics of BMI from UKB and BBJ. For demonstration, we use the easily accessible genotypes from The 1000 Genomes Project as the reference panel. __However, because this reference panel only contains 1.3 million SNPs from 377 EAS amples and 417 EUR samples, the result of XPASS is slightly less accurate than what we reported in the AJHG paper. The performance of XPASS can be better when a GWAS dataset with a larger sample size (e.g.,n>2000) and more SNPs (e.g., 3M) is used as the reference panel. We strongly suggest that users use their own reference panels with sufficiently large sample sizes if available.__ 
 
 ## Data preparation
 
@@ -26,7 +26,7 @@ Input files of XPASS includ:
 - covariates file associated with the target population reference panel. The covariates files can include sex, age and population information of the individuals from the reference panel.
 - covariates file associated with the auxiliary population reference panel
 
-Different from LDSC that only utilizes LD from local SNPs, XPASS uses the LD information from the entire chromosomes to estimate heritability and coheritability. This approach yields smaller standard error, but requires the population structures in the reference pannel to be properly corrected by __including the covariates (e.g., principal components)__. Otherwise, the estimated heritability and coheritability can be __biased by the population structures__ (see [here](https://github.com/YangLabHKUST/XPASS/blob/master/ref_cvt.pdf) for an example). Therefore, we __strongly suggest__ users to __include covariates (e.g., principal components)__ when using XPASS although they are optional in the software.
+Different from LDSC that only utilizes LD from local SNPs, XPASS uses the LD information from the entire chromosomes to estimate heritability and coheritability. This approach yields smaller standard error, but requires the population structures in the reference pannel to be properly corrected by __including the covariates (e.g., principal components)__. Otherwise, the estimated heritability and coheritability can be __biased by the population structures__ (see [here](https://github.com/YangLabHKUST/XPASS/blob/master/ref_cvt.pdf) for an example). Therefore, we __strongly suggest__ that users __include covariates (e.g., principal components)__ when using XPASS although they are optional in the software.
 
 The XPASS format GWAS summary statistics file has 5 fields:
 
