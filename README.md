@@ -1,6 +1,6 @@
 # XPASS
 
-The XPASS package implement the XPASS approach for generating PRS in a target population by integrating cross-ancestry datasets.
+The XPASS package implements the XPASS approach for constructing PRS in an under-representated target population by leveraging Biobank-scale GWAS data in European populations.
 
 # Installation 
 
