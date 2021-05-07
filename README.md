@@ -260,11 +260,13 @@ XPASS will also write above outputs into the files with `file_out` prefix, if pr
 
 ## External validation using independent GWAS data
 
-Because the WeGene data is currently not available online, we use the GWAS of female BMI from BBJ as the external validation dataset to approximate the prediction $R^2$. Specifically we use the following equation:
+We use the GWAS of female BMI from BBJ as the external validation dataset to approximate the prediction $R^2$. Specifically we use the following equation:
 
 $$R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2,$$
 
 where $z$ is the z-score of external summsry statistics, $n$ is its sample size, $\tilde{\mu}$ is the posterior mean of effect size at the standardized genotype scale, $\Sigma$ is the LD reference panel.
+
+The `evalR2_XPASS` function takes posterior means from XPASS output and the external validation summary statistics as its input to evaluate the approximated predictive R2. The ouput is a vector of prdictive R2 evaluated using mu1, mu2, mu_XPASS1, and mu_XPASS2, respectively.
 
 ```{r}
 > R2 <- evalR2_XPASS(fit_bbj$mu,BMI_bbj_female,ref_EAS)
@@ -338,6 +340,9 @@ R2 <- evalR2_XPASS(fit_both$mu,BMI_bbj_female,ref_EAS)
 This yields similar results when the population-specific effects are included only in the target population.
 
 An additional example for constructing PRS of Type 2 Disbetes can be found in [this PDF](https://github.com/YangLabHKUST/XPASS/blob/master/Manual_XPASS.pdf).
+
+
+# FAQ
 
 
 # Development
