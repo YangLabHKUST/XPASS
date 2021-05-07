@@ -264,7 +264,7 @@ We use the GWAS of female BMI from BBJ as the external validation dataset to app
 
 <img src="https://latex.codecogs.com/svg.image?R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," title="R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," />
 
-where z is the z-score of external summsry statistics, n is its sample size, is the posterior mean of effect size at the standardized genotype scale, $\Sigma$ is the LD reference panel.
+where z is the z-score of external summsry statistics, n is its sample size, <img src="https://latex.codecogs.com/svg.image?\tilde{\mu}" title="\tilde{\mu}" /> is the posterior mean of effect size at the standardized genotype scale, $\Sigma$ is the LD reference panel.
 
 The `evalR2_XPASS` function takes posterior means from XPASS output and the external validation summary statistics as its input to evaluate the approximated predictive R2. The ouput is a vector of prdictive R2 evaluated using mu1, mu2, mu_XPASS1, and mu_XPASS2, respectively.
 
