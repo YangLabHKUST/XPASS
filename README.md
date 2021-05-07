@@ -262,7 +262,7 @@ XPASS will also write above outputs into the files with `file_out` prefix, if pr
 
 We use the GWAS of female BMI from BBJ as the external validation dataset to approximate the prediction $R^2$. Specifically we use the following equation:
 
-$$R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2,$$
+<a href="https://www.codecogs.com/eqnedit.php?latex=R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," target="_blank"><img src="https://latex.codecogs.com/gif.latex?R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," title="R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," /></a>
 
 where $z$ is the z-score of external summsry statistics, $n$ is its sample size, $\tilde{\mu}$ is the posterior mean of effect size at the standardized genotype scale, $\Sigma$ is the LD reference panel.
 
