@@ -275,7 +275,7 @@ The `evalR2_XPASS` function takes posterior means from XPASS output and the exte
 0.02235596 0.01638359 0.02905665 0.01949609
 ```
 
-While the reference panels have only limmited samples, XPASS still achieves 30% relative improvement compared to LDpred-inf in terms of $R^2$.
+While the reference panels have only limmited samples, XPASS still achieves 30% relative improvement compared to LDpred-inf in terms of R2.
 
 ## XPASS+
 
@@ -339,7 +339,7 @@ R2 <- evalR2_XPASS(fit_both$mu,BMI_bbj_female,ref_EAS)
 ```
 This yields similar results when the population-specific effects are included only in the target population.
 
-An additional example for constructing PRS of Type 2 Disbetes can be found in [this PDF](https://github.com/YangLabHKUST/XPASS/blob/master/Manual_XPASS.pdf).
+An additional example for constructing PRS of Type 2 Diabetes can be found in [this PDF](https://github.com/YangLabHKUST/XPASS/blob/master/Manual_XPASS.pdf).
 
 
 # FAQ
