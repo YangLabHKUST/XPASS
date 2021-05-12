@@ -40,7 +40,7 @@
 
 XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_cov2=NULL,file_predGeno=NULL,K1=NULL,K2=NULL,K12=NULL,X1=NULL,X2=NULL,
                   snps_fe1=NULL,snps_fe2=NULL,snp_list=NULL,
-                  sd_method="Chromosome",pop="EUR",compPosMean=T,use_CG=T,compPRS=F,file_out=""){
+                  sd_method="Chromosome",pop="EUR",compPosMean=T,use_CG=T,compPRS=F,file_out="", build="hg38"){
   if(nchar(file_out)>0){
     cat("Writing to log file: ",file_out,".log\n",sep="")
     sink(paste0(file_out,".log"),append=F,split=T)
@@ -301,7 +301,11 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
 
   if(sd_method=="LD_block"|compPosMean){
     cat("Assigning SNPs to LD Blocks...\n")
-    block <- read.table(system.file("extdata", paste0(pop,"_fourier_ls-all.bed"), package = "XPASS"),header = T)
+	if(build=='hg19'){
+    	block <- read.table(system.file("extdata", paste0(pop,"_fourier_ls-all.bed"), package = "XPASS"),header = T)
+	}else if(toupper(build)=="HG38"){
+	block<-read.table(paste0("XPASS/inst/extdata/EAS_fourier_ls-all_Hg38.bed"), header=T)
+	}
     group <- rep(0,nrow(zf1))
     idx_group <- 1
     for(i in 1:22){
