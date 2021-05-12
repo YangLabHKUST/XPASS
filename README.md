@@ -1,6 +1,6 @@
 # XPASS
 
-The XPASS package implement the XPASS approach for generating PRS in a target population by integrating multi-ethnic datasets.
+The XPASS package implements the XPASS approach for constructing PRS in an under-representated target population by leveraging Biobank-scale GWAS data in European populations.
 
 # Installation 
 
@@ -11,7 +11,7 @@ devtools::install_github("YangLabHKUST/XPASS")
 
 # Quick start
 
-We illustrate the usage of XPASS using the GWAS summary statistics of BMI from UKB and BBJ. For demonstration, we use the easily accessible 1000 Genomes project genotypes as reference panels. __However, because these reference panels only contain 377 EAS amples and 417 EUR samples, optimal prediction accuracy of XPASS is not expected. In practice, it is suggested to use larger datasets as reference panels (n>2000). Therefore, we strongly suggest users to use their own reference panels with sufficiently large sample sizes.__ 
+We illustrate the usage of XPASS using the GWAS summary statistics of BMI from UKB and BBJ. For demonstration, we use the easily accessible genotypes from The 1000 Genomes Project as the reference panel. __However, because this reference panel only contains 1.3 million SNPs from 377 EAS amples and 417 EUR samples, the result of XPASS is slightly less accurate than what we reported in the AJHG paper. The performance of XPASS can be better when a GWAS dataset with a larger sample size (e.g.,n>2000) and more SNPs (e.g., 3M) is used as the reference panel. We strongly suggest that users use their own reference panels with sufficiently large sample sizes if available.__ 
 
 ## Data preparation
 
@@ -23,8 +23,10 @@ Input files of XPASS includ:
 - summay statistics file of the auxiliary population
 - reference panel of the target population in plink 1 format
 - reference panel of the auxiliary population in plink 1 format
-- covariates file associated with the target population reference panel (optional)
-- covariates file associated with the auxiliary population reference panel (optional)
+- covariates file associated with the target population reference panel. The covariates files can include sex, age and population information of the individuals from the reference panel.
+- covariates file associated with the auxiliary population reference panel
+
+Different from LDSC that only utilizes LD from local SNPs, XPASS uses the LD information from the entire chromosomes to estimate heritability and coheritability. This approach yields smaller standard error, but requires the population structures in the reference pannel to be properly corrected by __including the covariates (e.g., principal components)__. Otherwise, the estimated heritability and coheritability can be __biased by the population structures__ (see [here](https://github.com/YangLabHKUST/XPASS/blob/master/ref_cvt.pdf) for an example). Therefore, we __strongly suggest__ that users __include covariates (e.g., principal components)__ when using XPASS although they are optional in the software.
 
 The XPASS format GWAS summary statistics file has 5 fields:
 
@@ -258,11 +260,13 @@ XPASS will also write above outputs into the files with `file_out` prefix, if pr
 
 ## External validation using independent GWAS data
 
-Because the WeGene data is currently not available online, we use the GWAS of female BMI from BBJ as the external validation dataset to approximate the prediction $R^2$. Specifically we use the following equation:
+We use the GWAS of female BMI from BBJ as the external validation dataset to approximate the prediction R2. Specifically we use the following equation:
 
-$$R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2,$$
+<img src="https://latex.codecogs.com/svg.image?R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," title="R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," />
 
-where $z$ is the z-score of external summsry statistics, $n$ is its sample size, $\tilde{\mu}$ is the posterior mean of effect size at the standardized genotype scale, $\Sigma$ is the LD reference panel.
+where z is the z-score of external summsry statistics, n is its sample size, <img src="https://latex.codecogs.com/svg.image?\tilde{\mu}" title="\tilde{\mu}" /> is the posterior mean of effect size at the standardized genotype scale, <img src="https://latex.codecogs.com/svg.image?\Sigma" title="\Sigma" /> is the LD reference panel.
+
+The `evalR2_XPASS` function takes posterior means from XPASS output and the external validation summary statistics as its input to evaluate the approximated predictive R2. The ouput is a vector of prdictive R2 evaluated using mu1, mu2, mu_XPASS1, and mu_XPASS2, respectively.
 
 ```{r}
 > R2 <- evalR2_XPASS(fit_bbj$mu,BMI_bbj_female,ref_EAS)
@@ -338,12 +342,18 @@ This yields similar results when the population-specific effects are included on
 An additional example for constructing PRS of Type 2 Disbetes can be found in [this PDF](https://github.com/YangLabHKUST/XPASS/blob/master/Manual_XPASS.pdf).
 
 
+# FAQ
+
+Common issues are discussed in [FAQ](https://github.com/YangLabHKUST/XPASS/wiki/FAQ)
+
 # Development
 
 The XPASS package is developed by Mingxuan Cai (mcaiad@ust.hk).
 
-
-
 # Contact information
 
 Please contact Mingxuan Cai (mcaiad@ust.hk) or Prof. Can Yang (macyang@ust.hk) if any enquiry.
+
+# Reference
+
+Mingxuan Cai, Jiashun Xiao, Shunkang Zhang, Xiang Wan, Hongyu Zhao, Gang Chen, Can Yang. A uniﬁed framework for cross-population trait prediction by leveraging the genetic correlation of polygenic traits. The American Journal of Human Genetics. 108, 632-655, April 2021.
