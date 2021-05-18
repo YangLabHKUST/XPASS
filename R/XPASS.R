@@ -422,6 +422,7 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
 
       # remove SNPs shhowing no variation in the training genotypes
       Xtest <- Xtest[,!no_var]
+      test_info <- test_info[!no_var,]
 
       # align alleles in test genotype based on the first ref
       ind_ref <- ref1_info$A1!=test_info$A1
