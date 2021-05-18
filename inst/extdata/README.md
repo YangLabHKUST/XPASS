@@ -13,3 +13,12 @@ rm -rf nygcresearch-ldetect-data-ac125e47bf7f/
 ##LiftOver EUR_fourier_ls-all.bed to hg38
 Wrote lifted bedfile file to XPASS/inst/extdata/AFR_fourier_ls-all_Hg38.bed. 2580 out of 2581 were lifted.
 
+
+#in R
+
+```
+#liftover(x="/home/bbita/R/x86_64-pc-linux-gnu-library/4.0/XPASS/extdata/EAS_fourier_ls-all.bed", pop='EAS', hg_old="hg19", hg_new="hg38")
+#liftover(x="/home/bbita/R/x86_64-pc-linux-gnu-library/4.0/XPASS/extdata/EUR_fourier_ls-all.bed", pop='EUR', hg_old="hg19", hg_new="hg38")
+#liftover(x="XPASS/inst/extdata/AFR_fourier_ls-all.bed", pop='AFR', hg_old="hg19", hg_new="hg38")
+```
+
