@@ -38,11 +38,9 @@
 #' See vignette.
 #' @export
 
-XPASS_BB <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,
-                     file_cov2=NULL,file_predGeno=NULL,K1=NULL,K2=NULL,
-                     K12=NULL,X1=NULL,X2=NULL,snps_fe1=NULL,snps_fe2=NULL,
-                     snp_list=NULL,sd_method="Chromosome",pop="EUR",compPosMean=T,
-                     use_CG=T,compPRS=T,file_out="", build="hg38"){
+XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,
+                     file_cov2=NULL,file_predGeno=NULL,K1=NULL,K2=NULL,K12=NULL,X1=NULL,X2=NULL,snps_fe1=NULL,snps_fe2=NULL,
+                     snp_list=NULL,sd_method="Chromosome",pop="EUR",compPosMean=T, use_CG=T,compPRS=T,file_out="", dir="XPASS/inst/extdata/"){
   if(nchar(file_out)>0){
     cat("Writing to log file: ",file_out,".log\n",sep="")
     sink(paste0(file_out,".log"),append=F,split=T)
@@ -70,19 +68,18 @@ XPASS_BB <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,
 
   # matching SNPs
   snps <- intersect(zf1$SNP,ref1_info$SNP)
-  print(length(snps)) #debug
   snps <- intersect(snps,zf2$SNP)
-  print(length(snps)) #debug
   snps <- intersect(snps,ref2_info$SNP)
-  print(length(snps)) #debug
   if(!is.null(snp_list)) snps <- snps[snps%in%snp_list]    # extract SNPs in the provided list if any
   if(!is.null(file_predGeno)&compPosMean){                 # match SNPs in test genotype if provided
     cat("Reading SNP info from test genotype file...\n")
     test_info <- fread(paste(file_predGeno,".bim",sep=""),data.table = F,stringsAsFactors = F)
     colnames(test_info) <-  c("CHR","SNP","POS","BP","A1","A2")
     cat(nrow(test_info)," SNPs found in test file.\n",sep = "")
+    
     snps <- intersect(test_info$SNP,snps)
   }
+
   zf1 <- zf1[match(snps,zf1$SNP),]
   zf2 <- zf2[match(snps,zf2$SNP),]
   idx_ref1 <- match(snps,ref1_info$SNP)
@@ -128,6 +125,7 @@ XPASS_BB <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,
 
   # remove ambiguous SNPs
   snps_rm <- (ref1_A1+ref1_A2)!=(zf1_A1+zf1_A2) | (ref1_A1+ref1_A2)!=(zf2_A1+zf2_A2) | (ref1_A1+ref1_A2)!=(ref2_A1+ref2_A2) | (ref2_A1+ref2_A2)!=(zf1_A1+zf1_A2) | (ref2_A1+ref2_A2)!=(zf2_A1+zf2_A2) | (zf2_A1+zf2_A2)!=(zf1_A1+zf1_A2)
+
   if(!is.null(file_predGeno)&compPosMean){
     # replace T with A, replace G with C; A=1, C=2
     test_info$A1[test_info$A1=="T"] <- "A"
@@ -145,6 +143,7 @@ XPASS_BB <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,
   ref1_info <- ref1_info[!snps_rm,]
   ref2_info <- ref2_info[!snps_rm,]
   snps_info <- snps_info[!snps_rm,]
+
   if(!is.null(file_predGeno)&compPosMean){
     idx_test <- idx_test[!snps_rm]
     test_info <- test_info[!snps_rm,]
@@ -179,7 +178,6 @@ XPASS_BB <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,
     if(is.null(X1)){
       ref1 <- read_data(file_ref1,fillMiss = "zero")
       X1 <- ref1$X[,idx_ref1]
-
     }
 
     if(is.null(X2)){
@@ -303,11 +301,7 @@ XPASS_BB <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,
 
   if(sd_method=="LD_block"|compPosMean){
     cat("Assigning SNPs to LD Blocks...\n")
-	if(build=='hg19'){
-    	block <- read.table(system.file("extdata", paste0(pop,"_fourier_ls-all.bed"), package = "XPASS"),header = T)
-	}else if(toupper(build)=="HG38"){
-	block<-read.table(paste0("XPASS/inst/extdata/EAS_fourier_ls-all_Hg38.bed"), header=T)
-	}
+    	block <- ifelse(dir==NULL, read.table(system.file("extdata", paste0(pop,"_fourier_ls-all.bed"), package = "XPASS"),header = T), read.table(paste0(dir,pop, "_fourier_ls-all.bed"), header=T))
     group <- rep(0,nrow(zf1))
     idx_group <- 1
     for(i in 1:22){
