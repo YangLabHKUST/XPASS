@@ -38,9 +38,9 @@
 #' See vignette.
 #' @export
 
-XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_cov2=NULL,file_predGeno=NULL,K1=NULL,K2=NULL,K12=NULL,X1=NULL,X2=NULL,
-                  snps_fe1=NULL,snps_fe2=NULL,snp_list=NULL,
-                  sd_method="Chromosome",pop="EUR",compPosMean=T,use_CG=T,compPRS=F,file_out=""){
+XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,
+                     file_cov2=NULL,file_predGeno=NULL,K1=NULL,K2=NULL,K12=NULL,X1=NULL,X2=NULL,snps_fe1=NULL,snps_fe2=NULL,
+                     snp_list=NULL,sd_method="Chromosome",pop="EUR",compPosMean=T, use_CG=T,compPRS=T,file_out="", dir="XPASS/inst/extdata/"){
   if(nchar(file_out)>0){
     cat("Writing to log file: ",file_out,".log\n",sep="")
     sink(paste0(file_out,".log"),append=F,split=T)
@@ -76,7 +76,7 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
     test_info <- fread(paste(file_predGeno,".bim",sep=""),data.table = F,stringsAsFactors = F)
     colnames(test_info) <-  c("CHR","SNP","POS","BP","A1","A2")
     cat(nrow(test_info)," SNPs found in test file.\n",sep = "")
-
+    
     snps <- intersect(test_info$SNP,snps)
   }
 
@@ -301,7 +301,7 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
 
   if(sd_method=="LD_block"|compPosMean){
     cat("Assigning SNPs to LD Blocks...\n")
-    block <- read.table(system.file("extdata", paste0(pop,"_fourier_ls-all.bed"), package = "XPASS"),header = T)
+    	block <- read.table(file=ifelse(dir==NULL, system.file("extdata", paste0(pop,"_fourier_ls-all.bed"), package = "XPASS"),paste0(dir,pop, "_fourier_ls-all.bed")), header=T)
     group <- rep(0,nrow(zf1))
     idx_group <- 1
     for(i in 1:22){
@@ -419,6 +419,7 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
       fam_test <- fread(paste0(file_predGeno,".fam"))
       test_geno <- read_data(file_predGeno,fillMiss = "zero")
       Xtest <- test_geno$X[,idx_test]
+      print(head(Xtest)) #debug
 
       # remove SNPs shhowing no variation in the training genotypes
       Xtest <- Xtest[,!no_var]
@@ -426,6 +427,7 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,file_c
 
       # align alleles in test genotype based on the first ref
       ind_ref <- ref1_info$A1!=test_info$A1
+      traceback() #debug
       if(sum(ind_ref)>0){
         Xtest[,ind_ref] <- 1-(Xtest[,ind_ref]-1)
         cat(sum(ind_ref)," SNPs in the test genotypes are alligned for alleles according to the first.\n",sep="")
