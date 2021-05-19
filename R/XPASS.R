@@ -301,7 +301,7 @@ XPASS <- function(file_z1,file_z2,file_ref1,file_ref2=NULL,file_cov1=NULL,
 
   if(sd_method=="LD_block"|compPosMean){
     cat("Assigning SNPs to LD Blocks...\n")
-    	block <- ifelse(dir==NULL, read.table(system.file("extdata", paste0(pop,"_fourier_ls-all.bed"), package = "XPASS"),header = T), read.table(paste0(dir,pop, "_fourier_ls-all.bed"), header=T))
+    	block <- read.table(file=ifelse(dir==NULL, system.file("extdata", paste0(pop,"_fourier_ls-all.bed"), package = "XPASS"),paste0(dir,pop, "_fourier_ls-all.bed")), header=T)
     group <- rep(0,nrow(zf1))
     idx_group <- 1
     for(i in 1:22){
