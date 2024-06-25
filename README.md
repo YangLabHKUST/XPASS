@@ -17,7 +17,7 @@ We illustrate the usage of XPASS using the GWAS summary statistics of BMI from U
 
 The datasets involved in the following example can be downloaded from [here](https://www.dropbox.com/sh/i7rhnko69974dje/AACfcDXz0cmwshbli8q7PZA5a?dl=0).
 
-Input files of XPASS includ:
+Input files of XPASS include:
 
 - summay statistics file of the target population
 - summay statistics file of the auxiliary population
